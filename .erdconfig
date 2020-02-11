@@ -1,0 +1,3 @@
+filename: doc/erd
+filetype: pdf
+#exclude: Doorkeeper::Application,Doorkeeper::AccessGrant,Doorkeeper::AccessToken
