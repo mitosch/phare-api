@@ -1,24 +1,24 @@
-# README
+# Phare - Web Performance Monitoring
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Phare is a web performance monitoring API, built with Ruby On Rails, to periodically monitor URLs with [Google PageSpeed Insights API](https://developers.google.com/speed/docs/insights/v5/get-started?hl=en) and provide the most relevant statistics.
 
-Things you may want to cover:
+## Prerequisites
 
-* Ruby version
+* Postgres >= 10
 
-* System dependencies
+## API
 
-* Configuration
+### PUT /api/v1/pub/pages
 
-* Database creation
+Add an URL to the monitoring pool.
 
-* Database initialization
+Payload:
+```json
+{
+  "url": "https://www.google.com"
+}
+```
 
-* How to run the test suite
+## Licensing
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+This project is [MIT licensed](./LICENSE.md).
