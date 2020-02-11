@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # A single audit report
-class AuditRequest < ApplicationRecord
+class AuditReport < ApplicationRecord
   # Audit types:
   #
   # psi   Google PageSpeed Insights

@@ -15,9 +15,8 @@ ActiveRecord::Schema.define(version: 2020_02_11_154134) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "audit_requests", force: :cascade do |t|
+  create_table "audit_reports", force: :cascade do |t|
     t.jsonb "body", default: {}, null: false
-    t.text "url"
     t.integer "audit_type", default: 0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
