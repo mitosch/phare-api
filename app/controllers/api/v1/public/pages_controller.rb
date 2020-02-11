@@ -9,7 +9,7 @@ module Api
         #
         # expected payload:
         # {
-        #   "url": "https://www.swisscom.ch"
+        #   "url": "https://www.example.com"
         # }
         #
         # Adds an URL to the queue or requeues it, if it already exists.
@@ -19,7 +19,7 @@ module Api
         #
         # Example:
         # curl -X PUT -H "Content-Type: application/json" \
-        #   -d '{"url":"https://www.swisscom.ch"}' \
+        #   -d '{"url":"https://www.example.com"}' \
         #   http://localhost:3000/api/v1/pub/pages
         def create_or_update
           render json: { done: true }
