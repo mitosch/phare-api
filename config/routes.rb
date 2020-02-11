@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       scope module: "public", path: "pub" do
-        # resources :audit_requests
+        put :pages, to: "pages#create_or_update"
       end
     end
   end
