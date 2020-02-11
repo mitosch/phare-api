@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_11_154134) do
+ActiveRecord::Schema.define(version: 2020_02_11_163745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,16 @@ ActiveRecord::Schema.define(version: 2020_02_11_154134) do
     t.integer "audit_type", default: 0, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "page_id", null: false
+    t.index ["page_id"], name: "index_audit_reports_on_page_id"
   end
 
+  create_table "pages", force: :cascade do |t|
+    t.text "url"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  add_foreign_key "audit_reports", "pages"
 end

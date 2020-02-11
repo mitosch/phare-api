@@ -16,4 +16,6 @@ class AuditReport < ApplicationRecord
     psi: 0,
     lighthouse: 1
   }
+
+  belongs_to :page
 end
