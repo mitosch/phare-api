@@ -18,7 +18,7 @@ module Api
         # report type (psi, lighthouse) will be identified automatically
         #
         # curl -X POST -H "Content-Type: application/json" \
-        #   -d '{"url":"https://www.swisscom.ch", "report": {} }' \
+        #   -d '{"url":"https://www.example.com", "report": {} }' \
         #   http://localhost:3000/api/v1/pub/audit_reports
         def create
           report = params.delete(:report)
