@@ -28,10 +28,9 @@ module Api
           page = Page.find_or_create_by(url: uri.to_s)
           page.save
 
-          # TODO: setup ActiveJob and run there
-          PageAuditor.call(page)
+          PageAuditJob.perform_later(page)
 
-          render json: { done: true }
+          render json: page
         rescue URI::InvalidURIError
           render json: { error: "invalid url" }, status: :bad_request
         end
