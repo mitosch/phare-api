@@ -24,9 +24,12 @@ module Api
         def create_or_update
           uri = parse_url(page_params[:url])
 
+          # TODO: after ActiveJob; force a new job, currently does nothing
           page = Page.find_or_create_by(url: uri.to_s)
-          page.save # TODO: change to a datetime field to identify requeue
-          # TODO: page.audit! run PageSpeed API call and save AuditReport
+          page.save
+
+          # TODO: setup ActiveJob and run there
+          PageAuditor.call(page)
 
           render json: { done: true }
         rescue URI::InvalidURIError
