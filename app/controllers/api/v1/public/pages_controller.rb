@@ -40,6 +40,7 @@ module Api
             params.permit([:url])
           end
 
+          # TODO: DRY (audit_reports_controller)
           def parse_url(url)
             unless url.start_with?("http://", "https://")
               raise URI::InvalidURIError, "Invalid URL", url
