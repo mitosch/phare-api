@@ -7,8 +7,8 @@ module Api
     module Public
       # API endpoint for getting statistics of a page
       class StatisticsController < PublicController
+        METRICS = %i[mpf fmp fci fcp si ia].freeze
 
-        METRICS = [:mpf, :fmp, :fci, :fcp, :si, :ia]
         # GET /pub/pages/:page_id/statistics
         #
         # params:
@@ -63,7 +63,6 @@ module Api
 
           def merge_days(arr)
             merged = {}
-            last = nil
 
             grouped = arr.group_by { |a| a[:day] }
 
