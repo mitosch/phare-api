@@ -81,5 +81,6 @@ test:
 production:
   <<: *default
   database: phare_base_production
+  host: localhost
   username: <%= ENV['DATABASE_USER'] %>
   password: <%= ENV['DATABASE_PASSWORD'] %>
