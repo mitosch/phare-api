@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "net/http"
+
 # Runs a Google PageSpeed audit and saves it to the database
 class PageAuditor < ApplicationService
   def initialize(page)
