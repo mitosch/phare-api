@@ -1,11 +1,18 @@
 # frozen_string_literal: true
 
+require "standard_deviation"
+
 module Api
   module V1
     module Public
       # API endpoint for getting statistics of a page
       class StatisticsController < PublicController
+
+        METRICS = [:mpf, :fmp, :fci, :fcp, :si, :ia]
         # GET /pub/pages/:page_id/statistics
+        #
+        # params:
+        # merge   enum  daily: merge values and return mean
         #
         # curl -X GET -H "Content-Type: application/json" \
         #   http://localhost:3000/api/v1/pub/pages/1/statistics
@@ -25,8 +32,10 @@ module Api
 
             lh = report.body["lighthouseResult"]
 
+            fetch_time = lh.dig("fetchTime")
             payload << {
-              fetchTime: lh.dig("fetchTime"),
+              fetchTime: fetch_time,
+              day: Date.parse(fetch_time),
               mpf: lh.dig("audits", "max-potential-fid", "numericValue"),
               fmp: lh.dig("audits", "first-meaningful-paint", "numericValue"),
               fci: lh.dig("audits", "first-cpu-idle", "numericValue"),
@@ -36,12 +45,38 @@ module Api
             }
           end
 
-          # TODO: sort payload by fetchTime
+          payload = sort_by_fetch_time(payload)
+
+          if params[:merge] && params[:merge] == "daily"
+            payload = merge_days(payload)
+          end
 
           render json: payload
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
+
+        private
+          def sort_by_fetch_time(arr)
+            arr.sort_by { |a| DateTime.parse(a[:fetchTime]) }
+          end
+
+          def merge_days(arr)
+            merged = {}
+            last = nil
+
+            grouped = arr.group_by { |a| a[:day] }
+
+            grouped.each do |day, entries|
+              merged[day] = {}
+
+              METRICS.each do |metric|
+                merged[day][metric] = entries.map { |e| e[metric] }.mean
+              end
+            end
+
+            merged.map { |day, data| { day: day }.merge(data) }
+          end
       end
     end
   end
