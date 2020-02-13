@@ -22,3 +22,9 @@
 /config/master.key
 
 .*.swp
+
+/shared/pids/*
+!/shared/pids/.keep
+/shared/sockets/*
+!/shared/sockets/.keep
+config/blazing.rb
