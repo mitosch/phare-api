@@ -81,5 +81,5 @@ test:
 production:
   <<: *default
   database: phare_base_production
-  username: phare_base
-  password: <%= ENV['PHARE_BASE_DATABASE_PASSWORD'] %>
+  username: <%= ENV['DATABASE_USER'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
