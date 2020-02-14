@@ -24,10 +24,7 @@ module Api
         def create_or_update
           uri = parse_url(page_params[:url])
 
-          # TODO: after ActiveJob; force a new job, currently does nothing
           page = Page.find_or_create_by(url: uri.to_s)
-          page.save
-
           PageAuditJob.perform_later(page)
 
           render json: page

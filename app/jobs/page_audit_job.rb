@@ -5,6 +5,8 @@ class PageAuditJob < ApplicationJob
   queue_as :audits
 
   def perform(page)
+    page.last_audited_at = DateTime.now
+    page.save
     PageAuditor.call(page)
   end
 end
