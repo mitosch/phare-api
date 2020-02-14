@@ -5,6 +5,15 @@ module Api
     module Public
       # API endpoint for pages beeing monitored
       class PagesController < PublicController
+        # GET /pub/pages
+        def show
+          page = Page.find(params[:page_id])
+
+          render json: page
+        rescue ActiveRecord::RecordNotFound
+          render json: { error: "page not found" }, status: :not_found
+        end
+
         # PUT /pub/pages
         #
         # expected payload:
