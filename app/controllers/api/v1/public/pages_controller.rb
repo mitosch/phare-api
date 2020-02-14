@@ -39,7 +39,7 @@ module Api
 
         private
           def page_params
-            params.permit([:url, :audit_frequency])
+            params.permit(%i[url audit_frequency])
           end
 
           # TODO: DRY (audit_reports_controller)
