@@ -15,7 +15,8 @@ Add an URL to the monitoring pool.
 Payload:
 ```json
 {
-  "url": "https://www.google.com"
+  "url": "https://www.google.com",
+  "audit_frequency": "hourly"
 }
 ```
 

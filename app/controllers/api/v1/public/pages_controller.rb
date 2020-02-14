@@ -25,6 +25,11 @@ module Api
           uri = parse_url(page_params[:url])
 
           page = Page.find_or_create_by(url: uri.to_s)
+          # OPTIMIZE: check if possible above with block...
+          if page_params[:audit_frequency]
+            page.audit_frequency = page_params[:audit_frequency]
+            page.save
+          end
           PageAuditJob.perform_later(page)
 
           render json: page
@@ -34,7 +39,7 @@ module Api
 
         private
           def page_params
-            params.permit([:url])
+            params.permit([:url, :audit_frequency])
           end
 
           # TODO: DRY (audit_reports_controller)

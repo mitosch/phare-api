@@ -17,7 +17,7 @@ namespace :audits do
                   1.day
                 end
 
-      if page.last_audited_at && page.last_audited_at > max_age
+      if page.last_audited_at && page.last_audited_at > max_age.ago
         Rails.logger.info("Page #{page.id} skipped, max age not reached")
         next
       end
