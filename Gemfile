@@ -45,4 +45,9 @@ group :development do
   gem "rubocop-performance", require: false
 end
 
+# jobs
+gem 'delayed_job_active_record'
+gem "daemons"
+
+# deployment
 gem "blazing"
