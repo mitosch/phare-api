@@ -4,12 +4,12 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       scope module: "public", path: "pub" do
-        put :pages, to: "pages#create_or_update"
-        get "pages/:page_id", to: "pages#show"
+        resources :pages, only: %i[show index]
+        put "pages", to: "pages#create_or_update"
 
         get "pages/:page_id/statistics", to: "statistics#show"
 
-        post :audit_reports, to: "audit_reports#create"
+        post "audit_reports", to: "audit_reports#create"
       end
     end
   end
