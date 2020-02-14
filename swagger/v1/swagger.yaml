@@ -1,0 +1,25 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/pub/pages":
+    get:
+      summary: list pages
+      responses:
+        '200':
+          description: pages found
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                url:
+                  type: string
+                audit_frequency:
+                  type: string
+                status:
+                  type: string

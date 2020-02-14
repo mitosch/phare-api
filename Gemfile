@@ -31,6 +31,9 @@ group :development, :test do
   gem "pry"
   gem "rspec-rails", "~> 4.0.0.beta3"
   gem "factory_bot_rails"
+
+  # rswag driven specs
+  gem "rswag-specs"
 end
 
 group :development do
@@ -51,3 +54,6 @@ gem "daemons"
 
 # deployment
 gem "blazing"
+
+# API documentation
+gem "rswag-api"

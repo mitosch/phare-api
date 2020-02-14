@@ -21,6 +21,7 @@ AllCops:
     - 'src/*'
     - 'spec/spec_helper.rb'
     - 'spec/rails_helper.rb'
+    - 'spec/swagger_helper.rb'
     - 'spec/*/*_spec.rb'
     - 'spec/factories/*.rb'
     - 'db/*.rb'
@@ -28,6 +29,7 @@ AllCops:
     - 'config.ru'
     - 'bin/*'
     - 'storage/**/*'
+    - 'lib/tasks/pocs/**/*'
 
 Performance:
   Exclude:
