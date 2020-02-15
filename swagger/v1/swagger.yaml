@@ -32,3 +32,36 @@ paths:
                   - active
                   - inactive
                   - archived
+  "/api/v1/pub/pages/{id}":
+    get:
+      summary: get page
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+      responses:
+        '200':
+          description: page found
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              url:
+                type: string
+              audit_frequency:
+                type: string
+                enum:
+                - hourly
+                - daily
+              status:
+                type: string
+                enum:
+                - active
+                - inactive
+                - archived
+        '404':
+          description: page not found
