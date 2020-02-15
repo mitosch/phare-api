@@ -5,6 +5,27 @@ info:
   version: v1
 paths:
   "/api/v1/pub/pages":
+    put:
+      summary: add or requeue page
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: page
+        in: body
+        schema:
+          type: object
+          properties:
+            url:
+              type: string
+            audit_frequency:
+              type: string
+          required:
+          - url
+      responses:
+        '200':
+          description: page created and requeued
     get:
       summary: list pages
       produces:

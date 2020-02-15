@@ -4,6 +4,25 @@ require "swagger_helper"
 
 RSpec.describe Api::V1::Public::PagesController do
   path "/api/v1/pub/pages" do
+    put "add or requeue page" do
+      consumes "application/json"
+      produces "application/json"
+
+      parameter name: :page, in: :body, schema: {
+        type: :object,
+        properties: {
+          url: { type: :string },
+          audit_frequency: { type: :string }
+        },
+        required: ["url"]
+      }
+
+      response "200", "page created and requeued" do
+        let(:page) { { url: "https://www.google.com", audit_frequency: "hourly" } }
+        run_test!
+      end
+    end
+
     get "list pages" do
       produces "application/json"
 
