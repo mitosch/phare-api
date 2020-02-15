@@ -1,5 +1,5 @@
 ---
-openapi: 3.0.1
+swagger: '2.0'
 info:
   title: API V1
   version: v1
@@ -7,6 +7,8 @@ paths:
   "/api/v1/pub/pages":
     get:
       summary: list pages
+      produces:
+      - application/json
       responses:
         '200':
           description: pages found
@@ -21,5 +23,12 @@ paths:
                   type: string
                 audit_frequency:
                   type: string
+                  enum:
+                  - hourly
+                  - daily
                 status:
                   type: string
+                  enum:
+                  - active
+                  - inactive
+                  - archived

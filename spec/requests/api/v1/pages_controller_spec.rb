@@ -3,8 +3,6 @@
 require "rails_helper"
 require "swagger_helper"
 
-# TODO: change version to swagger 2.0 (or adapt to OpenAPI 3.0.1)
-
 RSpec.describe Api::V1::Public::PagesController do
   before(:all) do
     FactoryBot.create_list(:page, 5)
@@ -21,8 +19,8 @@ RSpec.describe Api::V1::Public::PagesController do
             properties: {
               id: { type: :integer },
               url: { type: :string },
-              audit_frequency: { type: :string },
-              status: { type: :string }
+              audit_frequency: { type: :string, enum: ["hourly", "daily"] },
+              status: { type: :string, enum: ["active", "inactive", "archived"] }
             }
           }
 
