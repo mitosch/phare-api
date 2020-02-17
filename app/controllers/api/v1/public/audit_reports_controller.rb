@@ -10,7 +10,19 @@ module Api
         # GET /pub/pages/:page_id/audit_reports
         def index
           page = Page.find(params[:page_id])
+
           render json: page.audit_reports.to_json(except: :body)
+        rescue ActiveRecord::RecordNotFound
+          render json: { error: "page not found" }, status: :not_found
+        end
+
+        # GET /pub/pages/:page_id/audit_reports/:id
+        def show
+          page = Page.find(params[:page_id])
+
+          render json: page.audit_reports.find(params[:id])
+        rescue ActiveRecord::RecordNotFound # Page or AuditReport
+          render json: { error: "record not found" }, status: :not_found
         end
 
         # POST /pub/audit_reports
@@ -55,7 +67,7 @@ module Api
             params.permit([:url])
           end
 
-          # TODO: DRY (pages_controller)
+          # TODO: DRY (pages_controller) -> move to Page model validation
           def parse_url(url)
             unless url.start_with?("http://", "https://")
               raise URI::InvalidURIError, "Invalid URL", url

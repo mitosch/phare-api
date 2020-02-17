@@ -58,7 +58,7 @@ module Api
             params.permit(%i[url audit_frequency])
           end
 
-          # TODO: DRY (audit_reports_controller)
+          # TODO: DRY (audit_reports_controller) -> move to Page model valid.
           def parse_url(url)
             unless url.start_with?("http://", "https://")
               raise URI::InvalidURIError, "Invalid URL", url
