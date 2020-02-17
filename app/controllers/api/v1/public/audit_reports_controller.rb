@@ -7,6 +7,12 @@ module Api
       #
       # Currently in use for manually adding audit reports to pages
       class AuditReportsController < PublicController
+        # GET /pub/pages/:page_id/audit_reports
+        def index
+          page = Page.find(params[:page_id])
+          render json: page.audit_reports.to_json(except: :body)
+        end
+
         # POST /pub/audit_reports
         #
         # expected payload:
