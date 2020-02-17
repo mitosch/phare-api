@@ -34,6 +34,7 @@ module Api
 
             fetch_time = lh.dig("fetchTime")
             payload << {
+              auditReportId: report.id,
               fetchTime: fetch_time,
               day: Date.parse(fetch_time),
               mpf: lh.dig("audits", "max-potential-fid", "numericValue"),
@@ -61,6 +62,9 @@ module Api
             arr.sort_by { |a| DateTime.parse(a[:fetchTime]) }
           end
 
+          # Merges all audit report KPI by arithmetic mean of the same day.
+          #
+          # Implicitly removes the Audit Report ID
           def merge_days(arr)
             merged = {}
 
