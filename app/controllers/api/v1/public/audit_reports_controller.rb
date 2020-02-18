@@ -7,11 +7,36 @@ module Api
       #
       # Currently in use for manually adding audit reports to pages
       class AuditReportsController < PublicController
+        SUMMARY_METRICS = %w[
+          max-potential-fid
+          first-meaningful-paint
+          first-cpu-idle
+          first-contentful-paint
+          speed-index
+          interactive
+        ].freeze
+
         # GET /pub/pages/:page_id/audit_reports
         def index
           page = Page.find(params[:page_id])
 
-          render json: page.audit_reports.to_json(except: :body)
+          payload = []
+          page.audit_reports.each do |report|
+            report_data = {
+              id: report.id,
+              audit_type: report.audit_type
+            }
+
+            if params[:with] && params[:with] == "summary"
+              report_data[:summary] = extract_summary(
+                report.body["lighthouseResult"]
+              )
+            end
+
+            payload << report_data
+          end
+
+          render json: payload
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
@@ -74,6 +99,21 @@ module Api
             end
 
             URI.parse(url)
+          end
+
+          def extract_summary(lighthouse_report)
+            summary = {
+              fetchTime: lighthouse_report.dig("fetchTime")
+            }
+
+            SUMMARY_METRICS.each do |metric|
+              summary[metric] = lighthouse_report.dig(
+                "audits",
+                metric
+              ).slice("numericValue", "displayValue")
+            end
+
+            summary
           end
       end
     end
