@@ -40,7 +40,7 @@ module Api
 
               audit["details"]["items"].each do |item|
                 if item[field]&.include?(query)
-                  payload << { id: key, type: type }.merge(item)
+                  payload << { auditReportId: report.id, key: key, type: type }.merge(item)
                 end
               end
             end
