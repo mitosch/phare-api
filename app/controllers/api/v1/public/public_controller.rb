@@ -5,6 +5,17 @@ module Api
     module Public
       # API functionalities for all public endpoints.
       class PublicController < Api::V1::ApiController
+        before_action :client_key_authorize!
+
+        protected
+          def client_key_authorize!
+            if ENV["CLIENT_KEY"].present? &&
+               ENV["CLIENT_KEY"] != params[:key]
+              render json: {
+                error: "client key missing"
+              }, status: :unauthorized
+            end
+          end
       end
     end
   end
