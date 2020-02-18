@@ -12,6 +12,8 @@ Rails.application.routes.draw do
 
         get "pages/:page_id/statistics", to: "statistics#show"
 
+        get "pages/:page_id/dive", to: "dive#show"
+
         post "audit_reports", to: "audit_reports#create"
       end
     end
