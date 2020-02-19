@@ -27,7 +27,7 @@ module Api
               audit_type: report.audit_type
             }
 
-            if params[:with] && params[:with] == "summary"
+            if with_params("summary")
               report_data[:summary] = extract_summary(
                 report.body["lighthouseResult"]
               )
@@ -90,6 +90,13 @@ module Api
         private
           def audit_report_params
             params.permit([:url])
+          end
+
+          # Returns if the GET parameter "with" includes the string
+          def with_params(with)
+            return false unless params[:with]
+
+            params[:with].split(",").include?(with)
           end
 
           # TODO: DRY (pages_controller) -> move to Page model validation
