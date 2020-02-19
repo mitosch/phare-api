@@ -18,15 +18,24 @@ module Api
 
         # GET /pub/pages/:page_id/audit_reports
         def index
+          limit = params[:limit] || nil
+
           page = Page.find(params[:page_id])
 
           payload = []
-          page.audit_reports.order(created_at: :desc).each do |report|
+          page
+            .audit_reports
+            .order(created_at: :desc)
+            .limit(limit)
+            .each do |report|
             report_data = {
               id: report.id,
-              audit_type: report.audit_type,
-              lighthouseResult: report.body["lighthouseResult"]
+              audit_type: report.audit_type
             }
+
+            if with_params("lighthouse")
+              report_data[:lighthouseResult] = report.body["lighthouseResult"]
+            end
 
             if with_params("summary")
               report_data[:summary] = extract_summary(
