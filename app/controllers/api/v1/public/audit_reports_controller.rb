@@ -24,7 +24,8 @@ module Api
           page.audit_reports.order(created_at: :desc).each do |report|
             report_data = {
               id: report.id,
-              audit_type: report.audit_type
+              audit_type: report.audit_type,
+              lighthouseResult: report.body["lighthouseResult"]
             }
 
             if with_params("summary")
