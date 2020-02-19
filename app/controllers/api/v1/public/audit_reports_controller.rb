@@ -21,7 +21,7 @@ module Api
           page = Page.find(params[:page_id])
 
           payload = []
-          page.audit_reports.each do |report|
+          page.audit_reports.order(created_at: :desc).each do |report|
             report_data = {
               id: report.id,
               audit_type: report.audit_type

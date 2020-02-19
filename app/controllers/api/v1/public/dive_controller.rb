@@ -16,6 +16,8 @@ module Api
         # type:   audit type, e.g.: "opportunity"
         # field:  field to query, e.g.: "url"
         # q:      string to look for
+        #
+        # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
         def show
           type  = params[:type]   || "opportunity"
           field = params[:field]  || "url"
@@ -39,9 +41,14 @@ module Api
               next if audit["details"]["items"].blank?
 
               audit["details"]["items"].each do |item|
-                if item[field]&.include?(query)
-                  payload << { auditReportId: report.id, key: key, type: type }.merge(item)
-                end
+                next unless item[field]&.include?(query)
+
+                payload << {
+                  auditReportId: report.id,
+                  fetchTime: lh["fetchTime"],
+                  key: key,
+                  type: type
+                }.merge(item)
               end
             end
           end
@@ -50,6 +57,7 @@ module Api
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
+        # rubocop:enable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
       end
     end
   end
