@@ -6,6 +6,8 @@ module Api
       # API endpoint for pages beeing monitored
       class PagesController < PublicController
         # GET /pub/pages
+        #
+        # Returns all pages
         def index
           pages = Page.all
 
@@ -13,6 +15,8 @@ module Api
         end
 
         # GET /pub/pages/:page_id
+        #
+        # Returns a specific page
         def show
           page = Page.find(params[:id])
 
@@ -23,20 +27,7 @@ module Api
 
         # PUT /pub/pages
         #
-        # expected payload:
-        # {
-        #   "url": "https://www.example.com"
-        # }
-        #
         # Adds an URL to the queue or requeues it, if it already exists.
-        #
-        # Upcoming features:
-        # * define request time (hourly, daily, etc.)
-        #
-        # Example:
-        # curl -X PUT -H "Content-Type: application/json" \
-        #   -d '{"url":"https://www.example.com"}' \
-        #   http://localhost:3000/api/v1/pub/pages
         def create_or_update
           uri = parse_url(page_params[:url])
 

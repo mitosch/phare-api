@@ -17,7 +17,8 @@ RSpec.configure do |config|
       # openapi: '3.0.1',
       swagger: '2.0',
       info: {
-        title: 'API V1',
+        title: 'Phare API',
+        description: "Phare API: A Web Performance Monitoring API, driven by Google PageSpeed Insights API and powered by Ruby On Rails",
         version: 'v1'
       },
       paths: {},

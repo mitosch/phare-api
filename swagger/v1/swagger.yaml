@@ -1,7 +1,9 @@
 ---
 swagger: '2.0'
 info:
-  title: API V1
+  title: Phare API
+  description: 'Phare API: A Web Performance Monitoring API, driven by Google PageSpeed
+    Insights API and powered by Ruby On Rails'
   version: v1
 paths:
   "/api/v1/pub/pages":
@@ -21,11 +23,16 @@ paths:
               type: string
             audit_frequency:
               type: string
+              enum:
+              - hourly
+              - daily
           required:
           - url
       responses:
         '200':
           description: page created and requeued
+        '400':
+          description: invalid url
     get:
       summary: list pages
       produces:
@@ -86,3 +93,8 @@ paths:
                 - archived
         '404':
           description: page not found
+securityDefinitions:
+  apiKey:
+    type: apiKey
+    name: key
+    in: query

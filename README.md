@@ -8,9 +8,11 @@ Phare is a web performance monitoring API, built with Ruby On Rails, to periodic
 
 ## API
 
-### PUT /api/v1/pub/pages
+### Example Usage
 
-Add an URL to the monitoring pool.
+Add an URL to the monitoring pool:
+
+Request: `PUT /api/v1/pub/pages`
 
 Payload:
 ```json
@@ -31,36 +33,9 @@ Response:
 * If the URL does not exist, it will be created and fetched soon
 * If the URL exists, it will be fetched again soon
 
-### GET /api/v1/pub/pages/1/statistics
+### Documentation
 
-Returns statistics of the most relevant metrics.
-
-Response:
-```json
-[
-  {
-    "fetchTime": "2020-02-12T15:35:29.594Z",
-    "mpf": 971,
-    "fmp": 10355,
-    "fci": 17878,
-    "fcp": 9856,
-    "si": 12419.72590831366,
-    "ia": 19767.5
-  },
-  { }
-]
-```
-
-Attributes:
-```txt
-mpf: max-potential-fid
-fmp: first-meaningful-paint
-fci: first-cpu-idle
-fcp: first-contentful-paint
-si:  speed-index
-ia:  interactive
-```
-
+Find the full documentation of the [Phare API on SwaggerHub](https://app.swaggerhub.com/apis-docs/Mitosch/phare-api/v1).
 
 ## Licensing
 

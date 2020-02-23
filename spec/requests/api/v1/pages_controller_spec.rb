@@ -12,13 +12,18 @@ RSpec.describe Api::V1::Public::PagesController do
         type: :object,
         properties: {
           url: { type: :string },
-          audit_frequency: { type: :string }
+          audit_frequency: { type: :string, enum: ["hourly", "daily"] }
         },
         required: ["url"]
       }
 
       response "200", "page created and requeued" do
         let(:page) { { url: "https://www.google.com", audit_frequency: "hourly" } }
+        run_test!
+      end
+
+      response "400", "invalid url" do
+        let(:page) { { url: "htp://www.google.com", audit_frequency: "hourly" } }
         run_test!
       end
     end
