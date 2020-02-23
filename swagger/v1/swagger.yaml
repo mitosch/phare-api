@@ -6,6 +6,99 @@ info:
     Insights API and powered by Ruby On Rails'
   version: v1
 paths:
+  "/api/v1/pub/pages/{page_id}/audit_reports":
+    get:
+      summary: list audit reports of page
+      produces:
+      - application/json
+      parameters:
+      - name: page_id
+        in: path
+        type: string
+        required: true
+      - name: with
+        in: query
+        type: array
+        required: false
+        collectionFormat: csv
+        description: 'summary: returns numeric and display values of the key performance
+          metrics, lighthouse: add lighthouse json to the response'
+        items:
+          type: string
+          enum:
+          - summary
+          - lighthouse
+      - name: limit
+        in: query
+        type: integer
+        required: false
+        description: limit number of returned audit reports
+      responses:
+        '200':
+          description: audit reports found
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                audit_type:
+                  type: string
+                  enum:
+                  - psi
+                  - lighthouse
+                summary:
+                  type: object
+                  properties:
+                    fetchTime:
+                      type: string
+                      format: date-time
+                    max-potential-fid:
+                      type: object
+                      properties:
+                        numericValue:
+                          type: number
+                        displayValue:
+                          type: string
+                    first-meaningful-paint:
+                      type: object
+                      properties:
+                        numericValue:
+                          type: number
+                        displayValue:
+                          type: string
+                    first-cpu-idle:
+                      type: object
+                      properties:
+                        numericValue:
+                          type: number
+                        displayValue:
+                          type: string
+                    first-contentful-paint:
+                      type: object
+                      properties:
+                        numericValue:
+                          type: number
+                        displayValue:
+                          type: string
+                    speed-index:
+                      type: object
+                      properties:
+                        numericValue:
+                          type: number
+                        displayValue:
+                          type: string
+                    interactive:
+                      type: object
+                      properties:
+                        numericValue:
+                          type: number
+                        displayValue:
+                          type: string
+                lighthouseResult:
+                  type: object
+                  properties: {}
   "/api/v1/pub/pages":
     put:
       summary: add or requeue page

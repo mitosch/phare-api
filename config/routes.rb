@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
         put "pages", to: "pages#create_or_update"
 
+        # NOTE: this will be deprecated and done in pages#show with a param
         get "pages/:page_id/statistics", to: "statistics#show"
 
         get "pages/:page_id/dive", to: "dive#show"
