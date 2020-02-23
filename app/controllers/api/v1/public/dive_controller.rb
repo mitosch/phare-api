@@ -9,24 +9,22 @@ module Api
       class DiveController < PublicController
         # GET /pub/pages/:page_id/dive
         #
-        # Looks for items in given type where field include query string
+        # Returns items of a given audit.
         #
         # params:
         #
-        # type:   audit type, e.g.: "opportunity"
+        # audit:   audit, e.g.: "render-blocking-resources"
+        #
+        # tbd:
         # field:  field to query, e.g.: "url"
         # q:      string to look for
-        #
-        # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
         def show
-          type  = params[:type]   || "opportunity"
-          field = params[:field]  || "url"
-          query = params[:q]
-
-          if query.blank?
-            render json: { error: "no query given" }, status: :bad_request
-            return
-          end
+          # NOTE: currently not in use, only audits can be queried
+          # type      = params[:type]     || "opportunity"
+          # NOTE: filter, which could be implemented later
+          # field     = params[:field]    || "url"
+          # query     = params[:q]
+          audit = params[:audit] || "render-blocking-resources"
 
           page = Page.find(params[:page_id])
 
@@ -34,30 +32,17 @@ module Api
           page.audit_reports.each do |report|
             lh = report.body["lighthouseResult"]
 
-            lh["audits"].each do |key, audit|
-              next unless audit["details"] &&
-                          audit["details"]["type"] == type
-
-              next if audit["details"]["items"].blank?
-
-              audit["details"]["items"].each do |item|
-                next unless item[field]&.include?(query)
-
-                payload << {
-                  auditReportId: report.id,
-                  fetchTime: lh["fetchTime"],
-                  key: key,
-                  type: type
-                }.merge(item)
-              end
-            end
+            payload << {
+              auditReportId: report.id,
+              fetchTime: lh["fetchTime"],
+              items: lh["audits"][audit]["details"]["items"]
+            }
           end
 
           render json: payload
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
-        # rubocop:enable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
       end
     end
   end

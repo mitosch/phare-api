@@ -28,4 +28,4 @@
 /shared/sockets/*
 !/shared/sockets/.keep
 config/blazing.rb
-.env
+.env*
