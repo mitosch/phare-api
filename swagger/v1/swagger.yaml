@@ -93,6 +93,41 @@ paths:
                 - archived
         '404':
           description: page not found
+  "/api/v1/pub/pages/{id}/statistics":
+    get:
+      summary: get statistics of page
+      deprecated: true
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+      responses:
+        '200':
+          description: page found
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                day:
+                  type: string
+                mpf:
+                  type: number
+                fmp:
+                  type: number
+                fci:
+                  type: number
+                fcp:
+                  type: number
+                si:
+                  type: number
+                ia:
+                  type: number
+        '404':
+          description: page not found
 securityDefinitions:
   apiKey:
     type: apiKey

@@ -6,6 +6,9 @@ module Api
   module V1
     module Public
       # API endpoint for getting statistics of a page
+      #
+      # NOTE: This endpoint will probably be deprecated and replaced
+      #   by page#show
       class StatisticsController < PublicController
         METRICS = %i[mpf fmp fci fcp si ia].freeze
 
