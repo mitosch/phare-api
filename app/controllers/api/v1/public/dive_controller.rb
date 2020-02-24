@@ -13,17 +13,12 @@ module Api
         #
         # params:
         #
-        # audit:   audit, e.g.: "render-blocking-resources"
-        #
-        # tbd:
-        # field:  field to query, e.g.: "url"
-        # q:      string to look for
+        # audit:              audit, e.g.: "render-blocking-resources"
+        # filter[field]:      field to query, e.g.: "url"
+        # filter[query]:      string to look for
         def show
           # NOTE: currently not in use, only audits can be queried
           # type      = params[:type]     || "opportunity"
-          # NOTE: filter, which could be implemented later
-          # field     = params[:field]    || "url"
-          # query     = params[:q]
           audit = params[:audit] || "render-blocking-resources"
 
           page = Page.find(params[:page_id])
@@ -32,10 +27,12 @@ module Api
           page.audit_reports.each do |report|
             lh = report.body["lighthouseResult"]
 
+            items = filtered_items(lh["audits"][audit]["details"]["items"])
+
             payload << {
               auditReportId: report.id,
               fetchTime: lh["fetchTime"],
-              items: lh["audits"][audit]["details"]["items"]
+              items: items
             }
           end
 
@@ -43,6 +40,34 @@ module Api
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
+
+        private
+          # Filter items depending on given params
+          #
+          # Expected lighthouse items:
+          # [{
+          #     "url": "some_url",
+          #     "wastedMs": 7200,
+          #     "totalBytes": 560000
+          # }, {
+          #     "url": "another_url",
+          #     "wastedMs": 2500,
+          #     "totalBytes": 52300
+          # }]
+          def filtered_items(lighthouse_items)
+            if  params[:filter] &&
+                params[:filter][:field] &&
+                !params[:filter][:query].empty?
+              filter_field = params[:filter][:field]
+              filter_query = params[:filter][:query]
+
+              lighthouse_items.select do |item|
+                item[filter_field].include?(filter_query)
+              end
+            else
+              lighthouse_items
+            end
+          end
       end
     end
   end
