@@ -15,12 +15,12 @@ RSpec.describe Api::V1::Public::StatisticsController do
             type: :object,
             properties: {
               day: { type: :string },
-              mpf: { type: :number },
-              fmp: { type: :number },
-              fci: { type: :number },
-              fcp: { type: :number },
-              si: { type: :number },
-              ia: { type: :number }
+              max_potential_fid: { type: :number },
+              first_meaningful_paint: { type: :number },
+              first_cpu_idle: { type: :number },
+              first_contentful_paint: { type: :number },
+              speed_index: { type: :number },
+              interactive: { type: :number }
             }
           }
 

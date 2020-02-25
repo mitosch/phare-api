@@ -207,17 +207,17 @@ paths:
               properties:
                 day:
                   type: string
-                mpf:
+                max_potential_fid:
                   type: number
-                fmp:
+                first_meaningful_paint:
                   type: number
-                fci:
+                first_cpu_idle:
                   type: number
-                fcp:
+                first_contentful_paint:
                   type: number
-                si:
+                speed_index:
                   type: number
-                ia:
+                interactive:
                   type: number
         '404':
           description: page not found
