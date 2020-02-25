@@ -19,19 +19,27 @@ module Api
         def show
           # NOTE: currently not in use, only audits can be queried
           # type      = params[:type]     || "opportunity"
-          audit = params[:audit] || "render-blocking-resources"
+
+          # NOTE: gsub is needed to not run into a PG syntax error
+          audit = ActiveRecord::Base
+                  .sanitize_sql(params[:audit])
+                  .gsub("'", "''") || "render-blocking-resources"
 
           page = Page.find(params[:page_id])
 
           payload = []
-          page.audit_reports.each do |report|
-            lh = report.body["lighthouseResult"]
-
-            items = filtered_items(lh["audits"][audit]["details"]["items"])
+          page
+            .audit_reports
+            .select(:id,
+                    "body->'lighthouseResult'->'audits'->" \
+                    "'#{audit}'->'details'->'items' as items",
+                    "body->'lighthouseResult'->'fetchTime' as fetch_time")
+            .each do |report|
+            items = filtered_items(report.items)
 
             payload << {
               auditReportId: report.id,
-              fetchTime: lh["fetchTime"],
+              fetchTime: report.fetch_time,
               items: items
             }
           end
@@ -55,6 +63,8 @@ module Api
           #     "totalBytes": 52300
           # }]
           def filtered_items(lighthouse_items)
+            return [] unless lighthouse_items
+
             if  params[:filter] &&
                 params[:filter][:field] &&
                 !params[:filter][:query].empty?
