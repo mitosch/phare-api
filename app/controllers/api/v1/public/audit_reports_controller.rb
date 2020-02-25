@@ -7,14 +7,14 @@ module Api
       #
       # Currently in use for manually adding audit reports to pages
       class AuditReportsController < PublicController
-        SUMMARY_METRICS = %w[
-          max-potential-fid
-          first-meaningful-paint
-          first-cpu-idle
-          first-contentful-paint
-          speed-index
-          interactive
-        ].freeze
+        SUMMARY_METRICS = {
+          max_potential_fid: "max-potential-fid",
+          first_meaningful_paint: "first-meaningful-paint",
+          first_cpu_idle: "first-cpu-idle",
+          first_contentful_paint: "first-contentful-paint",
+          speed_index: "speed-index",
+          interactive: "interactive"
+        }.freeze
 
         # GET /pub/pages/:page_id/audit_reports
         def index
@@ -22,9 +22,12 @@ module Api
 
           page = Page.find(params[:page_id])
 
+          select_fields = prepare_selected_fields
+
           payload = []
           page
             .audit_reports
+            .select(select_fields)
             .order(created_at: :desc)
             .limit(limit)
             .each do |report|
@@ -34,13 +37,12 @@ module Api
             }
 
             if with_params("lighthouse")
-              report_data[:lighthouseResult] = report.body["lighthouseResult"]
+              report_data[:lighthouseResult] = report
+                                               .body["lighthouseResult"]
             end
 
             if with_params("summary")
-              report_data[:summary] = extract_summary(
-                report.body["lighthouseResult"]
-              )
+              report_data[:summary] = extract_summary(report)
             end
 
             payload << report_data
@@ -109,6 +111,23 @@ module Api
             params[:with].split(",").include?(with)
           end
 
+          def prepare_selected_fields
+            select_fields = %i[id audit_type]
+
+            select_fields.push(:body) if with_params("lighthouse")
+
+            if with_params("summary")
+              select_fields.push("body->'lighthouseResult'->" \
+                                 "'fetchTime' as fetch_time")
+              SUMMARY_METRICS.each do |key, metric|
+                select_fields.push("body->'lighthouseResult'->" \
+                                   "'audits'->'#{metric}' as #{key}")
+              end
+            end
+
+            select_fields
+          end
+
           # TODO: DRY (pages_controller) -> move to Page model validation
           def parse_url(url)
             unless url.start_with?("http://", "https://")
@@ -118,16 +137,13 @@ module Api
             URI.parse(url)
           end
 
-          def extract_summary(lighthouse_report)
+          def extract_summary(report)
             summary = {
-              fetchTime: lighthouse_report.dig("fetchTime")
+              fetchTime: report.fetch_time
             }
 
-            SUMMARY_METRICS.each do |metric|
-              summary[metric] = lighthouse_report.dig(
-                "audits",
-                metric
-              ).slice("numericValue", "displayValue")
+            SUMMARY_METRICS.each do |key, metric|
+              summary[metric] = report[key]
             end
 
             summary
