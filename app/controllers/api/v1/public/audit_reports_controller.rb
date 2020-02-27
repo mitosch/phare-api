@@ -6,6 +6,8 @@ module Api
       # API endpoint for audit reports
       #
       # Currently in use for manually adding audit reports to pages
+      #
+      # rubocop:disable Metrics/ClassLength
       class AuditReportsController < PublicController
         SUMMARY_METRICS = {
           max_potential_fid: "max-potential-fid",
@@ -15,6 +17,12 @@ module Api
           speed_index: "speed-index",
           interactive: "interactive"
         }.freeze
+
+        EXCLUDE_ATTRIBUTES = %w[
+          description
+          title
+          scoreDisplayMode
+        ].freeze
 
         # GET /pub/pages/:page_id/audit_reports
         def index
@@ -120,8 +128,12 @@ module Api
               select_fields.push("body->'lighthouseResult'->" \
                                  "'fetchTime' as fetch_time")
               SUMMARY_METRICS.each do |key, metric|
-                select_fields.push("body->'lighthouseResult'->" \
-                                   "'audits'->'#{metric}' as #{key}")
+                delete_op = EXCLUDE_ATTRIBUTES.map { |a| "#- '{#{a}}'" }
+                                              .join(" ")
+
+                select_fields
+                  .push("body->'lighthouseResult'->" \
+                        "'audits'->'#{metric}' #{delete_op} as #{key}")
               end
             end
 
@@ -149,6 +161,7 @@ module Api
             summary
           end
       end
+      # rubocop:enable Metrics/ClassLength
     end
   end
 end
