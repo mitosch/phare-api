@@ -31,9 +31,9 @@ module Api
           page
             .audit_reports
             .select(:id,
+                    "body->'lighthouseResult'->'fetchTime' as fetch_time",
                     "body->'lighthouseResult'->'audits'->" \
-                    "'#{audit}'->'details'->'items' as items",
-                    "body->'lighthouseResult'->'fetchTime' as fetch_time")
+                    "'#{audit}'->'details'->'items' as items")
             .each do |report|
             items = filtered_items(report.items)
 
