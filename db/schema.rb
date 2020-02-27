@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_25_164421) do
+ActiveRecord::Schema.define(version: 2020_02_27_061808) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,8 +21,8 @@ ActiveRecord::Schema.define(version: 2020_02_25_164421) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "page_id", null: false
+    t.jsonb "summary"
     t.index ["created_at"], name: "index_audit_reports_on_created_at", order: :desc
-    t.index ["created_at"], name: "test3_order_by_created_at", order: :desc
     t.index ["page_id"], name: "index_audit_reports_on_page_id"
   end
 

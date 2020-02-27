@@ -4,10 +4,6 @@ module Api
   module V1
     module Public
       # API endpoint for audit reports
-      #
-      # Currently in use for manually adding audit reports to pages
-      #
-      # rubocop:disable Metrics/ClassLength
       class AuditReportsController < PublicController
         SUMMARY_METRICS = {
           max_potential_fid: "max-potential-fid",
@@ -49,9 +45,7 @@ module Api
                                                .body["lighthouseResult"]
             end
 
-            if with_params("summary")
-              report_data[:summary] = extract_summary(report)
-            end
+            report_data[:summary] = report.summary if with_params("summary")
 
             payload << report_data
           end
@@ -123,19 +117,7 @@ module Api
             select_fields = %i[id audit_type]
 
             select_fields.push(:body) if with_params("lighthouse")
-
-            if with_params("summary")
-              select_fields.push("body->'lighthouseResult'->" \
-                                 "'fetchTime' as fetch_time")
-              SUMMARY_METRICS.each do |key, metric|
-                delete_op = EXCLUDE_ATTRIBUTES.map { |a| "#- '{#{a}}'" }
-                                              .join(" ")
-
-                select_fields
-                  .push("body->'lighthouseResult'->" \
-                        "'audits'->'#{metric}' #{delete_op} as #{key}")
-              end
-            end
+            select_fields.push(:summary) if with_params("summary")
 
             select_fields
           end
@@ -161,7 +143,6 @@ module Api
             summary
           end
       end
-      # rubocop:enable Metrics/ClassLength
     end
   end
 end

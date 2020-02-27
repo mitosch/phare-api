@@ -15,11 +15,3 @@ select id, to_date(body->'lighthouseResult'->>'fetchTime', 'YYYY-MM-DD') as ts, 
 
 SELECT TO_DATE(body->'lighthouseResult'->>'fetchTime', 'YYYY-MM-DD') AS day, AVG(CAST(body->'lighthouseResult'->'audits'->'max-potential-fid'->>'numericValue' AS INTEGER)) AS mpf FROM audit_reports WHERE page_id=4 GROUP BY day ORDER BY day;
 ```
-
-
-```sql
-CREATE INDEX test2_audits ON audit_reports ((body->'lighthouseResult'->'audits'->'max-potential-fid'->'id'));
-CREATE INDEX test3_audits ON audit_reports USING GIN ((body->'lighthouseResult'->'audits'));
-CREATE INDEX test4_audits ON audit_reports USING GIN ((body->'lighthouseResult'->'audits'->'max-potential-fid'));
-CREATE INDEX test1_fetch_time ON audit_reports ((body->'lighthouseResult'->'fetchTime'));
-```
