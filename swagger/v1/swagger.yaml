@@ -189,7 +189,6 @@ paths:
   "/api/v1/pub/pages/{id}/statistics":
     get:
       summary: get statistics of page
-      deprecated: true
       produces:
       - application/json
       parameters:
