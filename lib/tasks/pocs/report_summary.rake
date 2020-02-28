@@ -18,7 +18,7 @@ namespace :pocs do
       scoreDisplayMode
     ].freeze
 
-    select_fields = %i[id]
+    select_fields = %i[id summary]
     select_fields.push("body->'lighthouseResult'->" \
                        "'fetchTime' as fetch_time")
 
@@ -31,9 +31,11 @@ namespace :pocs do
               "'audits'->'#{metric}' #{delete_op} as #{key}")
     end
 
+    print "\n"
     AuditReport
       .all
       .select(select_fields)
+      .where(summary: nil)
       .find_each do |ar|
       summary = {
         fetchTime: ar.fetch_time
@@ -46,6 +48,9 @@ namespace :pocs do
       audit_report = AuditReport.find(ar.id)
       audit_report.summary = summary
       audit_report.save
+
+      print "."
     end
+    print "\n"
   end
 end
