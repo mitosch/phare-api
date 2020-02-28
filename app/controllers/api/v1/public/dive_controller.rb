@@ -16,9 +16,14 @@ module Api
         # audit:              audit, e.g.: "render-blocking-resources"
         # filter[field]:      field to query, e.g.: "url"
         # filter[query]:      string to look for
+        # startDate:          string of start date, format: YYYY-MM-DD
+        # endDate:            string of end date, format: YYYY-MM-DD
         def show
           # NOTE: currently not in use, only audits can be queried
           # type      = params[:type]     || "opportunity"
+
+          start_date = parse_date(params[:startDate]) || default_date(:start)
+          end_date = parse_date(params[:endDate]) || default_date(:end)
 
           # NOTE: gsub is needed to not run into a PG syntax error
           audit = ActiveRecord::Base
@@ -31,9 +36,11 @@ module Api
           page
             .audit_reports
             .select(:id,
-                    "body->'lighthouseResult'->'fetchTime' as fetch_time",
+                    "summary->'fetchTime' as fetch_time",
                     "body->'lighthouseResult'->'audits'->" \
                     "'#{audit}'->'details'->'items' as items")
+            .where("summary->>'fetchTime' >= ?", start_date)
+            .where("summary->>'fetchTime' <= ?", end_date)
             .each do |report|
             items = filtered_items(report.items)
 
@@ -45,6 +52,10 @@ module Api
           end
 
           render json: payload
+        rescue DateParseError
+          render json: {
+            error: "invalid date. required format: YYYY-MM-DD"
+          }, status: :bad_request
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
@@ -78,7 +89,37 @@ module Api
               lighthouse_items
             end
           end
+
+          def default_date(type)
+            count = case type
+                    when :start then 7
+                    when :end then 0
+                    end
+
+            time_string = case type
+                          when :start then "T00:00"
+                          when :end then "T24:00"
+                          end
+
+            date_string = (Time.now.utc - count.days).strftime("%Y-%m-%d")
+
+            date_string + time_string
+          end
+
+          def parse_date(param)
+            return false unless param
+            return Date.parse(param).strftime("%Y-%m-%d") if valid_date?(param)
+
+            raise DateParseError
+          end
+
+          def valid_date?(string)
+            year, month, day = string.split("-")
+            Date.valid_date?(year.to_i, month.to_i, day.to_i)
+          end
       end
+
+      class DateParseError < StandardError; end
     end
   end
 end
