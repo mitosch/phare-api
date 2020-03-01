@@ -15,3 +15,7 @@ select id, to_date(body->'lighthouseResult'->>'fetchTime', 'YYYY-MM-DD') as ts, 
 
 SELECT TO_DATE(body->'lighthouseResult'->>'fetchTime', 'YYYY-MM-DD') AS day, AVG(CAST(body->'lighthouseResult'->'audits'->'max-potential-fid'->>'numericValue' AS INTEGER)) AS mpf FROM audit_reports WHERE page_id=4 GROUP BY day ORDER BY day;
 ```
+
+```sql
+EXPLAIN ANALYZE SELECT "audit_reports"."id", summary->'fetchTime' as fetch_time, body->'lighthouseResult'->'audits'->'render-blocking-resources'->'details'->'items' as items FROM "audit_reports" WHERE "audit_reports"."page_id" = 1 AND (summary->>'fetchTime' >= '2020-02-23') AND (summary->>'fetchTime' <= '2020-03-01');
+```
