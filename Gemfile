@@ -51,6 +51,9 @@ group :development do
   gem "rubocop-performance", require: false
 end
 
+# serializer
+gem "fast_jsonapi"
+
 # jobs
 gem 'delayed_job_active_record'
 gem "daemons"

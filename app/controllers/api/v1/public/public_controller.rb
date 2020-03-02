@@ -9,8 +9,9 @@ module Api
 
         protected
           def client_key_authorize!
-            if ENV["CLIENT_KEY"].present? &&
-               ENV["CLIENT_KEY"] != params[:key]
+            if ENV["CLIENT_KEY"].present? && !(
+               ENV["CLIENT_KEY"] == request.headers["X-Api-Key"] ||
+               ENV["CLIENT_KEY"] == params[:key])
               render json: {
                 error: "client key missing"
               }, status: :unauthorized

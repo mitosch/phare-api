@@ -4,6 +4,8 @@ module Api
   module V1
     module Public
       # API endpoint for audit reports
+      #
+      # FIXME: Unpermitted params ind index
       class AuditReportsController < PublicController
         SUMMARY_METRICS = {
           max_potential_fid: "max-potential-fid",
@@ -22,35 +24,29 @@ module Api
 
         # GET /pub/pages/:page_id/audit_reports
         def index
-          limit = params[:limit] || nil
+          limit = params[:page] && params[:page][:limit] || nil
+
+          default_fields = { auditReport: %w[id] }.with_indifferent_access
 
           page = Page.find(params[:page_id])
 
-          select_fields = prepare_selected_fields
-
-          payload = []
-          page
-            .audit_reports
-            .select(select_fields)
-            .order(created_at: :desc)
-            .limit(limit)
-            .each do |report|
-            report_data = {
-              id: report.id,
-              audit_type: report.audit_type
-            }
-
-            if with_params("lighthouse")
-              report_data[:lighthouseResult] = report
-                                               .body["lighthouseResult"]
-            end
-
-            report_data[:summary] = report.summary if with_params("summary")
-
-            payload << report_data
+          fields = default_fields.merge(sparse_fields)
+          if fields[:auditReport].include?("lighthouseResult")
+            fields[:auditReport] << "body"
           end
 
-          render json: payload
+          selected_fields = select_fields(fields[:auditReport])
+
+          audit_reports = page
+                          .audit_reports
+                          .select(selected_fields)
+                          .order(Arel.sql("summary->'fetchTime' DESC"))
+                          .limit(limit)
+
+          render json: AuditReportSerializer.new(
+            audit_reports,
+            {}.merge(fields: fields)
+          )
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
@@ -113,13 +109,23 @@ module Api
             params[:with].split(",").include?(with)
           end
 
-          def prepare_selected_fields
-            select_fields = %i[id audit_type]
+          # Returns a hash from params for generating a sparse fieldset
+          def sparse_fields
+            result = params.permit(fields: {})[:fields]
 
-            select_fields.push(:body) if with_params("lighthouse")
-            select_fields.push(:summary) if with_params("summary")
+            result.to_h.map do |k, v|
+              v = v.split(",") if v.is_a?(String)
+              # [k, v.map(&:underscore)]
+              [k, v]
+            end.to_h
+          end
 
-            select_fields
+          # Returns an array with existing attributes
+          def select_fields(fields)
+            # fields.map!(&:underscore)
+            fields.map(&:underscore).select do |field|
+              AuditReport.column_names.include?(field)
+            end
           end
 
           # TODO: DRY (pages_controller) -> move to Page model validation
@@ -129,18 +135,6 @@ module Api
             end
 
             URI.parse(url)
-          end
-
-          def extract_summary(report)
-            summary = {
-              fetchTime: report.fetch_time
-            }
-
-            SUMMARY_METRICS.each do |key, metric|
-              summary[metric] = report[key]
-            end
-
-            summary
           end
       end
     end

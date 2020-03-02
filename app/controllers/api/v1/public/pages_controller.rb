@@ -18,7 +18,7 @@ module Api
         #
         # Returns all pages
         def index
-          pages = Page.all
+          pages = PageSerializer.new(Page.all)
 
           render json: pages
         end
@@ -27,7 +27,7 @@ module Api
         #
         # Returns a specific page
         def show
-          page = Page.find(params[:id])
+          page = PageSerializer.new(Page.find(params[:id]))
 
           render json: page
         rescue ActiveRecord::RecordNotFound

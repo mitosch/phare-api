@@ -5,7 +5,12 @@ changes.
 
 ## Open
 
-- [ ] Change all attributes in responses to camelCase
+- [ ] Change all attributes in responses to camelCase:
+  - [ ] Implement serializer with JSON:API standard spec
+  - [ ] Change fieldset selection e.g. "with=summary" to JSON:API standard, like:
+    ```txt
+    GET /articles?include=author&fields[articles]=title,body&fields[people]=name HTTP/1.1
+    ```
 - [ ] Add full lighthouse result in FactoryBot specs (AuditReport) and update spec
 
 ## Done
