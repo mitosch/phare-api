@@ -11,6 +11,7 @@ changes.
     ```txt
     GET /articles?include=author&fields[articles]=title,body&fields[people]=name HTTP/1.1
     ```
+  - [ ] Add default_url_options in production.rb like development.rb
 - [ ] Add full lighthouse result in FactoryBot specs (AuditReport) and update spec
 
 ## Done

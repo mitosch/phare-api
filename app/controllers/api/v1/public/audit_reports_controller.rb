@@ -26,11 +26,10 @@ module Api
         def index
           limit = params[:page] && params[:page][:limit] || nil
 
-          default_fields = { auditReport: %w[id] }.with_indifferent_access
-
           page = Page.find(params[:page_id])
 
-          fields = default_fields.merge(sparse_fields)
+          fields = sparse_fields(auditReport: %w[id])
+
           if fields[:auditReport].include?("lighthouseResult")
             fields[:auditReport] << "body"
           end
@@ -110,14 +109,15 @@ module Api
           end
 
           # Returns a hash from params for generating a sparse fieldset
-          def sparse_fields
+          def sparse_fields(defaults = {})
             result = params.permit(fields: {})[:fields]
 
             result.to_h.map do |k, v|
               v = v.split(",") if v.is_a?(String)
-              # [k, v.map(&:underscore)]
+              # merge array of fields, if defaults given
+              v |= defaults[k.to_sym] if defaults[k.to_sym]
               [k, v]
-            end.to_h
+            end.to_h.with_indifferent_access
           end
 
           # Returns an array with existing attributes
