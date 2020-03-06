@@ -52,7 +52,7 @@ group :development do
 end
 
 # serializer
-gem "fast_jsonapi"
+gem 'active_model_serializers', '~> 0.10.0'
 
 # jobs
 gem 'delayed_job_active_record'

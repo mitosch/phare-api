@@ -5,20 +5,23 @@ module Api
     module Public
       # API endpoint for pages beeing monitored
       class PagesController < PublicController
-        SUMMARY_METRICS = {
-          max_potential_fid: "max-potential-fid",
-          first_meaningful_paint: "first-meaningful-paint",
-          first_cpu_idle: "first-cpu-idle",
-          first_contentful_paint: "first-contentful-paint",
-          speed_index: "speed-index",
-          interactive: "interactive"
-        }.freeze
+        # include JSONAPI::ActsAsResourceController
+
+        # SUMMARY_METRICS = {
+        #   max_potential_fid: "max-potential-fid",
+        #   first_meaningful_paint: "first-meaningful-paint",
+        #   first_cpu_idle: "first-cpu-idle",
+        #   first_contentful_paint: "first-contentful-paint",
+        #   speed_index: "speed-index",
+        #   interactive: "interactive"
+        # }.freeze
 
         # GET /pub/pages
         #
         # Returns all pages
         def index
-          pages = PageSerializer.new(Page.all)
+          # pages = PageSerializer.new(Page.all)
+          pages = Page.all
 
           render json: pages
         end
@@ -27,9 +30,11 @@ module Api
         #
         # Returns a specific page
         def show
-          page = PageSerializer.new(Page.find(params[:id]))
+          page = Page.find(params[:id])
 
-          render json: page
+          render json: page,
+                 include: include_params,
+                 fields: sparse_fields
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
@@ -40,14 +45,7 @@ module Api
         def statistics
           page = Page.find(params[:page_id])
 
-          select_fields = prepare_selected_fields
-
-          payload = page
-                    .audit_reports
-                    .select(select_fields)
-                    .group("day")
-                    .order("day")
-          render json: payload.to_json(except: :id)
+          render json: page.statistics
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
@@ -85,19 +83,30 @@ module Api
             URI.parse(url)
           end
 
-          def prepare_selected_fields
-            select_fields = [
-              "TO_DATE(summary" \
-              "->>'fetchTime', 'YYYY-MM-DD') AS day"
-            ]
+          def include_params
+            params[:include].present? &&
+              params[:include].split(",").map(&:underscore)
+          end
 
-            SUMMARY_METRICS.each do |key, metric|
-              select_fields.push("AVG(CAST(summary" \
-                                 "->'#{metric}'->>'numericValue' " \
-                                 "AS FLOAT)) AS #{key}")
+          # Returns a hash from params for generating a sparse fieldset
+          # FIXME: Unpermitted parameters: :include, :key, :id
+          def sparse_fields(defaults = {})
+            result = params.permit(fields: {})[:fields]
+
+            fieldset = result.to_h.map do |k, v|
+              v = v.split(",").map(&:underscore) if v.is_a?(String)
+              # merge array of fields, if defaults given
+              # NOTE: did not work, when result was empty
+              # v |= defaults[k.to_sym] if defaults[k.to_sym]
+              [k, v]
+            end.to_h.with_indifferent_access
+
+            # merge array of fields, if defaults given
+            defaults.each do |k, v|
+              fieldset[k] = (fieldset[k] || []) | v
             end
 
-            select_fields
+            fieldset
           end
       end
     end

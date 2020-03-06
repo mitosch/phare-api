@@ -5,7 +5,7 @@ module Api
     module Public
       # API endpoint for audit reports
       #
-      # FIXME: Unpermitted params ind index
+      # FIXME: Unpermitted params in index
       class AuditReportsController < PublicController
         SUMMARY_METRICS = {
           max_potential_fid: "max-potential-fid",
@@ -112,12 +112,20 @@ module Api
           def sparse_fields(defaults = {})
             result = params.permit(fields: {})[:fields]
 
-            result.to_h.map do |k, v|
+            fieldset = result.to_h.map do |k, v|
               v = v.split(",") if v.is_a?(String)
               # merge array of fields, if defaults given
-              v |= defaults[k.to_sym] if defaults[k.to_sym]
+              # NOTE: did not work, when result was empty
+              # v |= defaults[k.to_sym] if defaults[k.to_sym]
               [k, v]
             end.to_h.with_indifferent_access
+
+            # merge array of fields, if defaults given
+            defaults.each do |k, v|
+              fieldset[k] = (fieldset[k] || []) | v
+            end
+
+            fieldset
           end
 
           # Returns an array with existing attributes

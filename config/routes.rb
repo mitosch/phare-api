@@ -8,12 +8,12 @@ Rails.application.routes.draw do
           resources :audit_reports, only: %i[index show]
         end
 
-        put "pages", to: "pages#create_or_update"
+        # put "pages", to: "pages#create_or_update"
         get "pages/:page_id/statistics", to: "pages#statistics"
 
-        get "pages/:page_id/dive", to: "dive#show"
+        # get "pages/:page_id/dive", to: "dive#show"
 
-        post "audit_reports", to: "audit_reports#create"
+        # post "audit_reports", to: "audit_reports#create"
       end
     end
   end

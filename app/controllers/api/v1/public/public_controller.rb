@@ -10,12 +10,23 @@ module Api
         protected
           def client_key_authorize!
             if ENV["CLIENT_KEY"].present? && !(
-               ENV["CLIENT_KEY"] == request.headers["X-Api-Key"] ||
+               ENV["CLIENT_KEY"] == auth_credentials ||
                ENV["CLIENT_KEY"] == params[:key])
               render json: {
                 error: "client key missing"
               }, status: :unauthorized
             end
+          end
+
+        private
+          def auth_credentials
+            return nil unless request.headers["Authorization"]
+
+            type, credentials = request.headers["Authorization"].split(" ")
+
+            return nil unless type == "ApiKey"
+
+            credentials
           end
       end
     end
