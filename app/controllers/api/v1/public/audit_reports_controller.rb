@@ -7,23 +7,6 @@ module Api
       #
       # FIXME: Unpermitted params in index
       class AuditReportsController < PublicController
-        # serialization_scope :view_context
-
-        SUMMARY_METRICS = {
-          max_potential_fid: "max-potential-fid",
-          first_meaningful_paint: "first-meaningful-paint",
-          first_cpu_idle: "first-cpu-idle",
-          first_contentful_paint: "first-contentful-paint",
-          speed_index: "speed-index",
-          interactive: "interactive"
-        }.freeze
-
-        EXCLUDE_ATTRIBUTES = %w[
-          description
-          title
-          scoreDisplayMode
-        ].freeze
-
         # GET /pub/pages/:page_id/audit_reports
         def index
           page = Page.find(params[:page_id])
@@ -33,10 +16,6 @@ module Api
           render json: AuditReportSerializer.new(audit_reports).serialized_json
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
-        end
-
-        def view_context
-          { with_body: true }
         end
 
         # GET /pub/pages/:page_id/audit_reports/:id
@@ -93,41 +72,6 @@ module Api
         private
           def audit_report_params
             params.permit([:url])
-          end
-
-          # Returns if the GET parameter "with" includes the string
-          def with_params(with)
-            return false unless params[:with]
-
-            params[:with].split(",").include?(with)
-          end
-
-          # Returns a hash from params for generating a sparse fieldset
-          def sparse_fields(defaults = {})
-            result = params.permit(fields: {})[:fields]
-
-            fieldset = result.to_h.map do |k, v|
-              v = v.split(",") if v.is_a?(String)
-              # merge array of fields, if defaults given
-              # NOTE: did not work, when result was empty
-              # v |= defaults[k.to_sym] if defaults[k.to_sym]
-              [k, v]
-            end.to_h.with_indifferent_access
-
-            # merge array of fields, if defaults given
-            defaults.each do |k, v|
-              fieldset[k] = (fieldset[k] || []) | v
-            end
-
-            fieldset
-          end
-
-          # Returns an array with existing attributes
-          def select_fields(fields)
-            # fields.map!(&:underscore)
-            fields.map(&:underscore).select do |field|
-              AuditReport.column_names.include?(field)
-            end
           end
 
           # TODO: DRY (pages_controller) -> move to Page model validation
