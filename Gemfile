@@ -52,7 +52,7 @@ group :development do
 end
 
 # serializer
-gem 'active_model_serializers', '~> 0.10.0'
+gem "simple_serializer", path: "lib/simple_serializer"
 
 # jobs
 gem 'delayed_job_active_record'

@@ -30,6 +30,8 @@ AllCops:
     - 'bin/*'
     - 'storage/**/*'
     - 'lib/tasks/pocs/**/*'
+    - 'lib/simple_serializer/simple_serializer.gemspec'
+    - 'lib/simple_serializer/Gemfile'
 
 Performance:
   Exclude:

@@ -5,6 +5,8 @@ module Api
     module Public
       # API endpoint for pages beeing monitored
       class PagesController < PublicController
+        # serialization_scope :view_context
+
         # include JSONAPI::ActsAsResourceController
 
         # SUMMARY_METRICS = {
@@ -23,7 +25,7 @@ module Api
           # pages = PageSerializer.new(Page.all)
           pages = Page.all
 
-          render json: pages
+          render json: PageSerializer.new(pages).serialized_json
         end
 
         # GET /pub/pages/:page_id
@@ -32,9 +34,7 @@ module Api
         def show
           page = Page.find(params[:id])
 
-          render json: page,
-                 include: include_params,
-                 fields: sparse_fields
+          render json: PageSerializer.new(page).serialized_json
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end

@@ -7,6 +7,8 @@ module Api
       #
       # FIXME: Unpermitted params in index
       class AuditReportsController < PublicController
+        # serialization_scope :view_context
+
         SUMMARY_METRICS = {
           max_potential_fid: "max-potential-fid",
           first_meaningful_paint: "first-meaningful-paint",
@@ -24,37 +26,29 @@ module Api
 
         # GET /pub/pages/:page_id/audit_reports
         def index
-          limit = params[:page] && params[:page][:limit] || nil
-
           page = Page.find(params[:page_id])
 
-          fields = sparse_fields(auditReport: %w[id])
+          audit_reports = page.audit_reports
 
-          if fields[:auditReport].include?("lighthouseResult")
-            fields[:auditReport] << "body"
-          end
-
-          selected_fields = select_fields(fields[:auditReport])
-
-          audit_reports = page
-                          .audit_reports
-                          .select(selected_fields)
-                          .order(Arel.sql("summary->'fetchTime' DESC"))
-                          .limit(limit)
-
-          render json: AuditReportSerializer.new(
-            audit_reports,
-            {}.merge(fields: fields)
-          )
+          render json: AuditReportSerializer.new(audit_reports).serialized_json
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
+        end
+
+        def view_context
+          { with_body: true }
         end
 
         # GET /pub/pages/:page_id/audit_reports/:id
         def show
           page = Page.find(params[:page_id])
 
-          render json: page.audit_reports.find(params[:id])
+          audit_report = page.audit_reports.unscoped.find(params[:id])
+
+          render json: AuditReportSerializer.new(
+            audit_report,
+            params: { with_body: true }
+          ).serialized_json
         rescue ActiveRecord::RecordNotFound # Page or AuditReport
           render json: { error: "record not found" }, status: :not_found
         end
