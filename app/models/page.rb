@@ -26,7 +26,6 @@ class Page < ApplicationRecord
 
   def statistics
     audit_reports
-      .unscoped
       .select(statistic_fields)
       .group("day")
       .order("day")
