@@ -6,7 +6,7 @@ class AuditReportSerializer
 
   attributes :id, :audit_type, :summary
 
-  attribute :body do |report, params|
-    params && params[:with_body] ? report.body : nil
+  attribute :lighthouse_result do |report, params|
+    params && params[:with_body] ? report.lighthouse_result : nil
   end
 end

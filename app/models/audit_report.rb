@@ -12,9 +12,9 @@ class AuditReport < ApplicationRecord
   # lighthouse  Lighthouse
   #   https://github.com/GoogleChrome/lighthouse
   #   * Lighthouse Report only
-  default_scope { select(AuditReport.column_names - ["body"]) }
+  # default_scope { select(AuditReport.column_names - ["body"]) }
   # NOTE: no way found to define scope in JSONAPI::Resource through relation
-  # scope :without_body, -> { select(AuditReport.column_names - ["body"]) }
+  scope :without_body, -> { select(AuditReport.column_names - ["body"]) }
 
   enum audit_type: {
     psi: 0,
@@ -22,4 +22,8 @@ class AuditReport < ApplicationRecord
   }
 
   belongs_to :page
+
+  def lighthouse_result
+    body && body["lighthouseResult"]
+  end
 end

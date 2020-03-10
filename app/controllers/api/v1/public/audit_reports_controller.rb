@@ -8,21 +8,36 @@ module Api
       # FIXME: Unpermitted params in index
       class AuditReportsController < PublicController
         # GET /pub/pages/:page_id/audit_reports
+        # TODO: reduce Cyclomatic complexity
+        # rubocop:disable Metrics/CyclomaticComplexity
         def index
+          limit = params[:page] && params[:page][:limit] || nil
+
+          needs_body = fieldsets["auditReports"]
+            &.include?("lighthouseResult") || false
+
           page = Page.find(params[:page_id])
 
-          audit_reports = page.audit_reports
+          audit_reports = page
+                          .audit_reports
+                          .limit(limit)
 
-          render json: AuditReportSerializer.new(audit_reports).serialized_json
+          audit_reports = audit_reports.without_body unless needs_body
+
+          render json: AuditReportSerializer.new(
+            audit_reports,
+            params: { with_body: needs_body ? true : false }
+          ).serialized_json
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
+        # rubocop:enable Metrics/CyclomaticComplexity
 
         # GET /pub/pages/:page_id/audit_reports/:id
         def show
           page = Page.find(params[:page_id])
 
-          audit_report = page.audit_reports.unscoped.find(params[:id])
+          audit_report = page.audit_reports.find(params[:id])
 
           render json: AuditReportSerializer.new(
             audit_report,
@@ -72,6 +87,25 @@ module Api
         private
           def audit_report_params
             params.permit([:url])
+          end
+
+          # Returns if the GET parameter "with" includes the string
+          def with_params(with)
+            return false unless params[:with]
+
+            params[:with].split(",").include?(with)
+          end
+
+          def fieldsets
+            result = params.permit(fields: {})[:fields]
+
+            result.to_h.map do |k, v|
+              v = v.split(",") if v.is_a?(String)
+              # merge array of fields, if defaults given
+              # NOTE: did not work, when result was empty
+              # v |= defaults[k.to_sym] if defaults[k.to_sym]
+              [k, v]
+            end.to_h
           end
 
           # TODO: DRY (pages_controller) -> move to Page model validation
