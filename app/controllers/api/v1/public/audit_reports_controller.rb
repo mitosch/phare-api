@@ -8,30 +8,24 @@ module Api
       # FIXME: Unpermitted params in index
       class AuditReportsController < PublicController
         # GET /pub/pages/:page_id/audit_reports
-        # TODO: reduce Cyclomatic complexity
-        # rubocop:disable Metrics/CyclomaticComplexity
         def index
-          limit = params[:page] && params[:page][:limit] || nil
-
-          needs_body = fieldsets["auditReports"]
-            &.include?("lighthouseResult") || false
+          prepare_defaults
 
           page = Page.find(params[:page_id])
 
           audit_reports = page
                           .audit_reports
-                          .limit(limit)
+                          .limit(@limit)
 
-          audit_reports = audit_reports.without_body unless needs_body
+          audit_reports = audit_reports.without_body unless @needs_body
 
           render json: AuditReportSerializer.new(
             audit_reports,
-            params: { with_body: needs_body ? true : false }
+            params: { with_body: @needs_body ? true : false }
           ).serialized_json
         rescue ActiveRecord::RecordNotFound
           render json: { error: "page not found" }, status: :not_found
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
 
         # GET /pub/pages/:page_id/audit_reports/:id
         def show
@@ -85,6 +79,12 @@ module Api
         end
 
         private
+          def prepare_defaults
+            @limit = params[:page] && params[:page][:limit] || nil
+            @needs_body = fieldsets["auditReports"]
+              &.include?("lighthouseResult") || false
+          end
+
           def audit_report_params
             params.permit([:url])
           end
