@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_01_123156) do
+ActiveRecord::Schema.define(version: 2020_03_10_083953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,20 @@ ActiveRecord::Schema.define(version: 2020_03_01_123156) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
+  create_table "label_pages", force: :cascade do |t|
+    t.bigint "label_id", null: false
+    t.bigint "page_id", null: false
+    t.index ["label_id"], name: "index_label_pages_on_label_id"
+    t.index ["page_id"], name: "index_label_pages_on_page_id"
+  end
+
+  create_table "labels", force: :cascade do |t|
+    t.string "name"
+    t.string "color"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "pages", force: :cascade do |t|
     t.text "url"
     t.integer "status", default: 0, null: false
@@ -52,4 +66,6 @@ ActiveRecord::Schema.define(version: 2020_03_01_123156) do
   end
 
   add_foreign_key "audit_reports", "pages"
+  add_foreign_key "label_pages", "labels"
+  add_foreign_key "label_pages", "pages"
 end

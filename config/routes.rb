@@ -7,6 +7,7 @@ Rails.application.routes.draw do
         resources :pages, only: %i[index show] do
           resources :audit_reports, only: %i[index show]
         end
+        resources :labels
 
         put "pages", to: "pages#create_or_update"
         get "pages/:page_id/statistics", to: "pages#statistics"

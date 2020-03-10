@@ -9,12 +9,26 @@ module Api
         #
         # Returns all pages
         def index
+          payload = []
+
           pages = Page.all
 
-          render json: PageSerializer.new(pages).serialized_json
+          if params[:include] && params[:include] == "label"
+            pages = pages.includes(:label)
+
+            pages.each do |page|
+              entry = PageSerializer.new(page).serializable_hash
+              entry[:label] = LabelSerializer.new(page.label).serializable_hash
+              payload << entry
+            end
+          else
+            payload = PageSerializer.new(pages).serialized_json
+          end
+
+          render json: payload
         end
 
-        # GET /pub/pages/:page_id
+        # GET /pub/pages/:id
         #
         # Returns a specific page
         def show

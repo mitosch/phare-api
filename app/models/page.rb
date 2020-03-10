@@ -24,6 +24,9 @@ class Page < ApplicationRecord
 
   has_many :audit_reports, dependent: :destroy
 
+  has_one :label_page, dependent: :destroy
+  has_one :label, through: :label_page
+
   def statistics
     audit_reports
       .select(statistic_fields)
