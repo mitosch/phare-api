@@ -14,7 +14,15 @@ module Api
           pages = Page.all
 
           if params[:include] && params[:include] == "label"
-            pages = pages.includes(:label)
+
+            if params[:filter] && params[:filter][:label]
+              label_id = params[:filter][:label].to_i
+              pages = pages
+                      .includes(:label)
+                      .where(label_pages: { label_id: label_id })
+            else
+              pages = pages.includes(:label)
+            end
 
             pages.each do |page|
               entry = PageSerializer.new(page).serializable_hash
