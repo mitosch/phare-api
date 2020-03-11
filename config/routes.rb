@@ -10,6 +10,7 @@ Rails.application.routes.draw do
         resources :labels
 
         put "pages", to: "pages#create_or_update"
+        put "pages/:page_id/label", to: "pages#update_label"
         get "pages/:page_id/statistics", to: "pages#statistics"
 
         get "pages/:page_id/dive", to: "dive#show"
