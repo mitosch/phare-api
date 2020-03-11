@@ -39,6 +39,21 @@ module Api
           end
         end
 
+        # PUT /pub/labels/:id
+        #
+        # Update label attributes
+        def update
+          label = Label.find(params[:id])
+
+          if label.update(label_params)
+            render json: LabelSerializer.new(label).serialized_json, status: :ok
+          else
+            render json: label.errors, status: :unprocessable_entity
+          end
+        rescue ActiveRecord::RecordNotFound
+          render json: { error: "label not found" }, status: :not_found
+        end
+
         private
           def label_params
             params.permit(%i[name color])
