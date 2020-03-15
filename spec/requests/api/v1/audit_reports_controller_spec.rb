@@ -2,7 +2,6 @@
 
 require "swagger_helper"
 
-# TODO: check multiple response tests
 RSpec.describe Api::V1::Public::AuditReportsController do
   path "/api/v1/pub/pages/{page_id}/audit_reports" do
     get "list audit reports of page" do
@@ -102,8 +101,27 @@ RSpec.describe Api::V1::Public::AuditReportsController do
             required: ["id", "auditType", "summary"]
           }
 
-        let(:page_id) { FactoryBot.create(:page_with_audit_report).id }
-        run_test!
+        context "fields or page limit not given" do
+          let(:page_id) { FactoryBot.create(:page_with_audit_report).id }
+
+          run_test!
+        end
+
+        # TODO: check for only 1 result in response
+        context "page limit given" do
+          let(:"page[limit]") { 1 }
+          let(:page_id) { FactoryBot.create(:page_with_audit_report).id }
+
+          run_test!
+        end
+
+        # TODO: check for lighthouseResult in response
+        context "sparse fieldset with lighthouseResult" do
+          let(:"fields[auditReports]") { ["lighthouseResult"] }
+          let(:page_id) { FactoryBot.create(:page_with_audit_report).id }
+
+          run_test!
+        end
       end
     end
   end
