@@ -31,7 +31,7 @@ RSpec.describe Api::V1::Public::AuditReportsController do
             type: :object,
             properties: {
               id: { type: :integer },
-              audit_type: { type: :string, enum: ["psi", "lighthouse"] },
+              auditType: { type: :string, enum: ["psi", "lighthouse"] },
               summary: {
                 type: :object,
                 properties: {
@@ -39,6 +39,8 @@ RSpec.describe Api::V1::Public::AuditReportsController do
                   "max-potential-fid": {
                     type: :object,
                     properties: {
+                      id: { type: :string },
+                      score: { type: :number },
                       numericValue: { type: :number },
                       displayValue: { type: :string }
                     }
@@ -46,6 +48,8 @@ RSpec.describe Api::V1::Public::AuditReportsController do
                   "first-meaningful-paint": {
                     type: :object,
                     properties: {
+                      id: { type: :string },
+                      score: { type: :number },
                       numericValue: { type: :number },
                       displayValue: { type: :string }
                     }
@@ -53,6 +57,8 @@ RSpec.describe Api::V1::Public::AuditReportsController do
                   "first-cpu-idle": {
                     type: :object,
                     properties: {
+                      id: { type: :string },
+                      score: { type: :number },
                       numericValue: { type: :number },
                       displayValue: { type: :string }
                     }
@@ -60,6 +66,8 @@ RSpec.describe Api::V1::Public::AuditReportsController do
                   "first-contentful-paint": {
                     type: :object,
                     properties: {
+                      id: { type: :string },
+                      score: { type: :number },
                       numericValue: { type: :number },
                       displayValue: { type: :string }
                     }
@@ -67,6 +75,8 @@ RSpec.describe Api::V1::Public::AuditReportsController do
                   "speed-index": {
                     type: :object,
                     properties: {
+                      id: { type: :string },
+                      score: { type: :number },
                       numericValue: { type: :number },
                       displayValue: { type: :string }
                     }
@@ -74,6 +84,8 @@ RSpec.describe Api::V1::Public::AuditReportsController do
                   "interactive": {
                     type: :object,
                     properties: {
+                      id: { type: :string },
+                      score: { type: :number },
                       numericValue: { type: :number },
                       displayValue: { type: :string }
                     }
@@ -82,13 +94,19 @@ RSpec.describe Api::V1::Public::AuditReportsController do
               },
               lighthouseResult: {
                 type: :object,
-                properties: {}
+                properties: {},
+                "x-nullable": true
               }
-            }
+            },
+            required: ["id", "auditType", "summary"]
           }
 
-        let(:page_id) { FactoryBot.create(:page).id }
-        run_test!
+        # FactoryBot.create(:page_with_audit_reports)
+        let(:page_id) { FactoryBot.create(:page_with_audit_report).id }
+        run_test! do |response|
+          puts "==========>"
+          pp JSON.parse(response.body)
+        end
       end
     end
   end

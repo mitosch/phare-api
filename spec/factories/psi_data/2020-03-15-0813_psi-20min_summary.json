@@ -1,0 +1,39 @@
+{
+    "fetchTime": "2020-03-15T08:13:55.677Z",
+    "interactive": {
+        "id": "interactive",
+        "score": 0,
+        "displayValue": "37.5 s",
+        "numericValue": 37532
+    },
+    "speed-index": {
+        "id": "speed-index",
+        "score": 0.01,
+        "displayValue": "16.1 s",
+        "numericValue": 16091.067012533467
+    },
+    "first-cpu-idle": {
+        "id": "first-cpu-idle",
+        "score": 0,
+        "displayValue": "22.6 s",
+        "numericValue": 22589
+    },
+    "max-potential-fid": {
+        "id": "max-potential-fid",
+        "score": 0.02,
+        "displayValue": "700 ms",
+        "numericValue": 696
+    },
+    "first-contentful-paint": {
+        "id": "first-contentful-paint",
+        "score": 0.02,
+        "displayValue": "9.5 s",
+        "numericValue": 9517
+    },
+    "first-meaningful-paint": {
+        "id": "first-meaningful-paint",
+        "score": 0.02,
+        "displayValue": "9.5 s",
+        "numericValue": 9527.5
+    }
+}

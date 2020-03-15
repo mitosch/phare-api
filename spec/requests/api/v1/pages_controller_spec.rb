@@ -40,7 +40,7 @@ RSpec.describe Api::V1::Public::PagesController do
               url: { type: :string },
               auditFrequency: { type: :string, enum: ["hourly", "daily"] },
               status: { type: :string, enum: ["active", "inactive", "archived"] },
-              lastAuditedAt: { type: :string, format: :datetime, "x-nullable": true }
+              lastAuditedAt: { type: :string, format: "date-time", "x-nullable": true }
             },
             required: ["id", "url", "auditFrequency", "status", "lastAuditedAt"]
           }
