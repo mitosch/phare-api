@@ -31,6 +31,29 @@ RSpec.describe Api::V1::Public::PagesController do
     get "list pages" do
       produces "application/json"
 
+      # TODO: active when labels endpoints are speced
+      #parameter name: :include,
+      #          in: :query,
+      #          type: :array,
+      #          required: false,
+      #          collectionFormat: :csv,
+      #          description: "include associations of pages, e.g. label",
+      #          items: {
+      #            type: :string,
+      #            enum: ["label"]
+      #          }
+
+      #parameter name: "filter[label]",
+      #          in: :query,
+      #          type: :array,
+      #          required: false,
+      #          collectionFormat: :csv,
+      #          description: "filter for pages with specific label IDs",
+      #          items: {
+      #            type: :number
+      #          }
+
+
       response "200", "pages found" do
         schema type: :array,
           items: {
@@ -45,6 +68,8 @@ RSpec.describe Api::V1::Public::PagesController do
             required: ["id", "url", "auditFrequency", "status", "lastAuditedAt"]
           }
 
+        # NOTE: workaround for bug in rswag. https://github.com/rswag/rswag/pull/197
+        let(:include) { [] }
         let!(:pages) { FactoryBot.create_list(:page, 5) }
         run_test!
       end
@@ -56,6 +81,18 @@ RSpec.describe Api::V1::Public::PagesController do
       produces "application/json"
       parameter name: :id, in: :path, type: :string
 
+      # TODO: active when labels endpoints are speced
+      #parameter name: :include,
+      #          in: :query,
+      #          type: :array,
+      #          required: false,
+      #          collectionFormat: :csv,
+      #          description: "include associations of pages, e.g. label",
+      #          items: {
+      #            type: :string,
+      #            enum: ["label"]
+      #          }
+
       response "200", "page found" do
         schema type: :object,
           properties: {
@@ -66,6 +103,8 @@ RSpec.describe Api::V1::Public::PagesController do
         },
         required: ["id", "url", "auditFrequency", "status", "lastAuditedAt"]
 
+        # NOTE: workaround for bug in rswag. https://github.com/rswag/rswag/pull/197
+        let(:include) { [] }
         let(:id) { FactoryBot.create(:page).id }
         run_test!
       end
