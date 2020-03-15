@@ -76,9 +76,19 @@ RSpec.describe Api::V1::Public::PagesController do
           }
 
         # NOTE: workaround for bug in rswag. https://github.com/rswag/rswag/pull/197
-        let(:include) { [] }
-        let!(:pages) { FactoryBot.create_list(:page, 5) }
-        run_test!
+        context "include or filter not set" do
+          let(:include) { [] }
+          let!(:pages) { FactoryBot.create_list(:page, 5) }
+
+          run_test!
+        end
+
+        context "include label given" do
+          let(:include) { ["label"] }
+          let!(:pages) { FactoryBot.create_list(:page, 5) }
+
+          run_test!
+        end
       end
     end
   end
