@@ -54,6 +54,14 @@ module Api
           render json: { error: "label not found" }, status: :not_found
         end
 
+        # DELETE /pub/labels/:id
+        #
+        # Delete label
+        #
+        # TODO: yes
+        #def destroy
+        #end
+
         private
           def label_params
             params.permit(%i[name color])
