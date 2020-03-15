@@ -83,8 +83,19 @@ RSpec.describe Api::V1::Public::PagesController do
           run_test!
         end
 
+        # TODO: check for label prop in response
         context "include label given" do
           let(:include) { ["label"] }
+          let!(:pages) { FactoryBot.create_list(:page, 5) }
+
+          run_test!
+        end
+
+        # TODO: check for specific pages with label id only
+        context "include label and filter label given" do
+          let(:include) { ["label"] }
+          # TODO: implement create pages with labels and use real id
+          let(:"filter[label]") { [1] }
           let!(:pages) { FactoryBot.create_list(:page, 5) }
 
           run_test!
