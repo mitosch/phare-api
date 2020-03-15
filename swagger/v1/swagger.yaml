@@ -362,6 +362,25 @@ paths:
       summary: list pages
       produces:
       - application/json
+      parameters:
+      - name: include
+        in: query
+        type: array
+        required: false
+        collectionFormat: csv
+        description: include associations of pages, e.g. label
+        items:
+          type: string
+          enum:
+          - label
+      - name: filter[label]
+        in: query
+        type: array
+        required: false
+        collectionFormat: csv
+        description: filter for pages with specific label IDs
+        items:
+          type: number
       responses:
         '200':
           description: pages found
@@ -389,6 +408,15 @@ paths:
                   type: string
                   format: date-time
                   x-nullable: true
+                label:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    color:
+                      type: string
               required:
               - id
               - url
@@ -405,6 +433,16 @@ paths:
         in: path
         type: string
         required: true
+      - name: include
+        in: query
+        type: array
+        required: false
+        collectionFormat: csv
+        description: include associations of pages, e.g. label
+        items:
+          type: string
+          enum:
+          - label
       responses:
         '200':
           description: page found
@@ -426,6 +464,19 @@ paths:
                 - active
                 - inactive
                 - archived
+              lastAuditedAt:
+                type: string
+                format: date-time
+                x-nullable: true
+              label:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  color:
+                    type: string
             required:
             - id
             - url
@@ -468,6 +519,37 @@ paths:
                   type: number
         '404':
           description: page not found
+  "/api/v1/pub/pages/{id}/label":
+    put:
+      summary: assign label to page
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+      - name: label
+        in: body
+        schema:
+          type: object
+          properties:
+            label:
+              type: object
+              properties:
+                id:
+                  type: integer
+          required:
+          - label
+      responses:
+        '200':
+          description: label assigned
+        '400':
+          description: invalid payload
+        '404':
+          description: page or label not found
 securityDefinitions:
   apiKey:
     type: apiKey
