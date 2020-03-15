@@ -25,16 +25,6 @@ RSpec.describe Api::V1::Public::AuditReportsController do
                 type: :integer,
                 required: false,
                 description: "limit number of returned audit reports"
-      # parameter name: :with,
-      #           in: :query,
-      #           type: :array,
-      #           required: false,
-      #           collectionFormat: :csv,
-      #           description: "summary: returns numeric and display values of the key performance metrics, lighthouse: add lighthouse json to the response",
-      #           items: {
-      #             type: :string,
-      #             enum: ["summary", "lighthouse"]
-      #           }
 
       response "200", "audit reports found" do
         schema type: :array,
