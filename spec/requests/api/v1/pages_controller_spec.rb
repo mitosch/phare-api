@@ -38,9 +38,11 @@ RSpec.describe Api::V1::Public::PagesController do
             properties: {
               id: { type: :integer },
               url: { type: :string },
-              audit_frequency: { type: :string, enum: ["hourly", "daily"] },
-              status: { type: :string, enum: ["active", "inactive", "archived"] }
-            }
+              auditFrequency: { type: :string, enum: ["hourly", "daily"] },
+              status: { type: :string, enum: ["active", "inactive", "archived"] },
+              lastAuditedAt: { type: :string, format: :datetime, "x-nullable": true }
+            },
+            required: ["id", "url", "auditFrequency", "status", "lastAuditedAt"]
           }
 
         let!(:pages) { FactoryBot.create_list(:page, 5) }
@@ -59,9 +61,10 @@ RSpec.describe Api::V1::Public::PagesController do
           properties: {
             id: { type: :integer },
             url: { type: :string },
-            audit_frequency: { type: :string, enum: ["hourly", "daily"] },
+            auditFrequency: { type: :string, enum: ["hourly", "daily"] },
             status: { type: :string, enum: ["active", "inactive", "archived"] }
-        }
+        },
+        required: ["id", "url", "auditFrequency", "status", "lastAuditedAt"]
 
         let(:id) { FactoryBot.create(:page).id }
         run_test!

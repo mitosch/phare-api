@@ -77,12 +77,13 @@ module Api
           page = Page.find_or_create_by(url: uri.to_s)
           # OPTIMIZE: check if possible above with block...
           if page_params[:audit_frequency]
+            # TODO: camelize param
             page.audit_frequency = page_params[:audit_frequency]
             page.save
           end
           PageAuditJob.perform_later(page)
 
-          render json: page
+          render json: PageSerializer.new(page).serialized_json
         rescue URI::InvalidURIError
           render json: { error: "invalid url" }, status: :bad_request
         end
