@@ -16,19 +16,18 @@ paths:
         in: path
         type: string
         required: true
-      - name: with
+      - name: fields[auditReports]
         in: query
         type: array
         required: false
         collectionFormat: csv
-        description: 'summary: returns numeric and display values of the key performance
-          metrics, lighthouse: add lighthouse json to the response'
+        description: 'sparese fields. lighthouseResult: add lighthouse json to the
+          response'
         items:
           type: string
           enum:
-          - summary
-          - lighthouse
-      - name: limit
+          - lighthouseResult
+      - name: page[limit]
         in: query
         type: integer
         required: false
@@ -43,7 +42,7 @@ paths:
               properties:
                 id:
                   type: integer
-                audit_type:
+                auditType:
                   type: string
                   enum:
                   - psi
@@ -57,6 +56,10 @@ paths:
                     max-potential-fid:
                       type: object
                       properties:
+                        id:
+                          type: string
+                        score:
+                          type: number
                         numericValue:
                           type: number
                         displayValue:
@@ -64,6 +67,10 @@ paths:
                     first-meaningful-paint:
                       type: object
                       properties:
+                        id:
+                          type: string
+                        score:
+                          type: number
                         numericValue:
                           type: number
                         displayValue:
@@ -71,6 +78,10 @@ paths:
                     first-cpu-idle:
                       type: object
                       properties:
+                        id:
+                          type: string
+                        score:
+                          type: number
                         numericValue:
                           type: number
                         displayValue:
@@ -78,6 +89,10 @@ paths:
                     first-contentful-paint:
                       type: object
                       properties:
+                        id:
+                          type: string
+                        score:
+                          type: number
                         numericValue:
                           type: number
                         displayValue:
@@ -85,6 +100,10 @@ paths:
                     speed-index:
                       type: object
                       properties:
+                        id:
+                          type: string
+                        score:
+                          type: number
                         numericValue:
                           type: number
                         displayValue:
@@ -92,6 +111,10 @@ paths:
                     interactive:
                       type: object
                       properties:
+                        id:
+                          type: string
+                        score:
+                          type: number
                         numericValue:
                           type: number
                         displayValue:
@@ -99,6 +122,118 @@ paths:
                 lighthouseResult:
                   type: object
                   properties: {}
+                  x-nullable: true
+              required:
+              - id
+              - auditType
+              - summary
+  "/api/v1/pub/pages/{page_id}/audit_reports/{audit_report_id}":
+    get:
+      summary: get audit report of page
+      produces:
+      - application/json
+      parameters:
+      - name: page_id
+        in: path
+        type: string
+        required: true
+      - name: audit_report_id
+        in: path
+        type: string
+        required: true
+      responses:
+        '200':
+          description: audit report found
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              auditType:
+                type: string
+                enum:
+                - psi
+                - lighthouse
+              summary:
+                type: object
+                properties:
+                  fetchTime:
+                    type: string
+                    format: date-time
+                  max-potential-fid:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      score:
+                        type: number
+                      numericValue:
+                        type: number
+                      displayValue:
+                        type: string
+                  first-meaningful-paint:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      score:
+                        type: number
+                      numericValue:
+                        type: number
+                      displayValue:
+                        type: string
+                  first-cpu-idle:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      score:
+                        type: number
+                      numericValue:
+                        type: number
+                      displayValue:
+                        type: string
+                  first-contentful-paint:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      score:
+                        type: number
+                      numericValue:
+                        type: number
+                      displayValue:
+                        type: string
+                  speed-index:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      score:
+                        type: number
+                      numericValue:
+                        type: number
+                      displayValue:
+                        type: string
+                  interactive:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      score:
+                        type: number
+                      numericValue:
+                        type: number
+                      displayValue:
+                        type: string
+              lighthouseResult:
+                type: object
+                properties: {}
+                x-nullable: true
+            required:
+            - id
+            - auditType
+            - summary
   "/api/v1/pub/pages":
     put:
       summary: add or requeue page
@@ -142,7 +277,7 @@ paths:
                   type: integer
                 url:
                   type: string
-                audit_frequency:
+                auditFrequency:
                   type: string
                   enum:
                   - hourly
@@ -153,6 +288,16 @@ paths:
                   - active
                   - inactive
                   - archived
+                lastAuditedAt:
+                  type: string
+                  format: date-time
+                  x-nullable: true
+              required:
+              - id
+              - url
+              - auditFrequency
+              - status
+              - lastAuditedAt
   "/api/v1/pub/pages/{id}":
     get:
       summary: get page
@@ -173,7 +318,7 @@ paths:
                 type: integer
               url:
                 type: string
-              audit_frequency:
+              auditFrequency:
                 type: string
                 enum:
                 - hourly
@@ -184,6 +329,12 @@ paths:
                 - active
                 - inactive
                 - archived
+            required:
+            - id
+            - url
+            - auditFrequency
+            - status
+            - lastAuditedAt
         '404':
           description: page not found
   "/api/v1/pub/pages/{id}/statistics":
