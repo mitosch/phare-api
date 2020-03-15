@@ -108,8 +108,8 @@ module Api
           end
 
           # assign label only, if id is > 0,
-          # else label will be nil and deleteed
-          label = if params[:label][:id]&.positive?
+          # else label will be nil and deleted
+          label = if params[:label][:id]&.to_i.positive?
                     Label.find(params[:label][:id])
                   end
 

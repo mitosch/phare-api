@@ -164,7 +164,7 @@ RSpec.describe Api::V1::Public::PagesController do
   end
 
   path "/api/v1/pub/pages/{id}/label" do
-    put "assign label to page" do
+    put "assign/remove label to/from page" do
       consumes "application/json"
       produces "application/json"
 
@@ -183,13 +183,25 @@ RSpec.describe Api::V1::Public::PagesController do
         required: ["label"]
       }
 
-      response "200", "label assigned" do
-        let(:page) { create(:page) }
-        let(:id) { page.id }
-        let(:label_id) { create(:label).id }
-        let(:label) { { label: { id: label_id } } }
+      response "200", "label assigned/removed" do
+        context "label id given to assign label" do
+          let(:page) { create(:page) }
+          let(:id) { page.id }
+          let(:label_id) { create(:label).id }
+          let(:label) { { label: { id: label_id } } }
 
-        run_test!
+          run_test!
+        end
+
+        # TODO: create page with label, then remove
+        context "minus-1 given to remove label" do
+          let(:page) { create(:page) }
+          let(:id) { page.id }
+          let(:label_id) { create(:label).id }
+          let(:label) { { label: { id: -1 } } }
+
+          run_test!
+        end
       end
 
       response "400", "invalid payload" do
@@ -202,14 +214,24 @@ RSpec.describe Api::V1::Public::PagesController do
         run_test!
       end
 
-      # TODO: multiple tests (if label id has not been found)
       response "404", "page or label not found" do
-        let(:page) { create(:page) }
-        let(:id) { "invalid" }
-        let(:label_id) { create(:label).id }
-        let(:label) { { label: { id: label_id } } }
+        context "invalid page id given" do
+          let(:page) { create(:page) }
+          let(:id) { "invalid" }
+          let(:label_id) { create(:label).id }
+          let(:label) { { label: { id: label_id } } }
 
-        run_test!
+          run_test!
+        end
+
+        context "invalid label id given" do
+          let(:page) { create(:page) }
+          let(:id) { page.id }
+          let(:label_id) { create(:label).id }
+          let(:label) { { label: { id: label_id + 1 } } }
+
+          run_test!
+        end
       end
     end
   end

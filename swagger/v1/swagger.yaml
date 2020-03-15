@@ -521,7 +521,7 @@ paths:
           description: page not found
   "/api/v1/pub/pages/{id}/label":
     put:
-      summary: assign label to page
+      summary: assign/remove label to/from page
       consumes:
       - application/json
       produces:
@@ -545,7 +545,7 @@ paths:
           - label
       responses:
         '200':
-          description: label assigned
+          description: label assigned/removed
         '400':
           description: invalid payload
         '404':
