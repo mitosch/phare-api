@@ -15,6 +15,7 @@ module Api
 
           audit_reports = page
                           .audit_reports
+                          .order(Arel.sql("summary->'fetchTime' DESC"))
                           .limit(@limit)
 
           audit_reports = audit_reports.without_body unless @needs_body
