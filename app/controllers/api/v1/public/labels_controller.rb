@@ -59,8 +59,8 @@ module Api
         # Delete label
         #
         # TODO: yes
-        #def destroy
-        #end
+        # def destroy
+        # end
 
         private
           def label_params
