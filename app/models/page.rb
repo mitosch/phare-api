@@ -3,12 +3,15 @@
 # A Page with an URL which will be fetched continuously
 class Page < ApplicationRecord
   SUMMARY_METRICS = {
-    max_potential_fid: "max-potential-fid",
-    first_meaningful_paint: "first-meaningful-paint",
-    first_cpu_idle: "first-cpu-idle",
-    first_contentful_paint: "first-contentful-paint",
-    speed_index: "speed-index",
-    interactive: "interactive"
+    max_potential_fid: "max-potential-fid",               # LH5 only, eol by LH6
+    first_meaningful_paint: "first-meaningful-paint",     # LH5 only, eol by LH6
+    first_cpu_idle: "first-cpu-idle",                     # LH5 only, eol by LH6
+    first_contentful_paint: "first-contentful-paint",     # LH5, LH6
+    speed_index: "speed-index",                           # LH5, LH6
+    interactive: "interactive",                           # LH5, LH6
+    largest_contentful_paint: "largest-contentful-paint", # LH6 (new)
+    total_blocking_time: "total-blocking-time",           # LH6 (new)
+    cumulative_layout_shift: "cumulative-layout-shift"    # LH6 (new)
   }.freeze
 
   enum status: {
