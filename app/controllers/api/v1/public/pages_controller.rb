@@ -13,6 +13,11 @@ module Api
 
           pages = Page.all
 
+          # search
+          if params[:filter] && params[:filter][:url]
+            pages = pages.where("url LIKE ?", "%#{params[:filter][:url]}%")
+          end
+
           if params[:include] && params[:include] == "label"
 
             if params[:filter] && params[:filter][:label]
