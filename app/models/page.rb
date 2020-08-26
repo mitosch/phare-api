@@ -30,12 +30,16 @@ class Page < ApplicationRecord
   has_one :label_page, dependent: :destroy
   has_one :label, through: :label_page
 
-  def statistics
-    audit_reports
-      .select(statistic_fields)
-      .group("day")
-      .order("day")
-      .to_json(except: :id)
+  def statistics(start_date = nil, end_date = nil)
+    stats = audit_reports
+            .select(statistic_fields)
+
+    stats = stats.where("summary->>'fetchTime' >= ?", start_date) if start_date
+    stats = stats.where("summary->>'fetchTime' <= ?", end_date) if end_date
+
+    stats.group("day")
+         .order("day")
+         .to_json(except: :id)
   end
 
   private
