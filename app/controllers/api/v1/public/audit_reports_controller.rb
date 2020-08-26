@@ -87,8 +87,8 @@ module Api
             @needs_body = fieldsets["auditReports"]
               &.include?("lighthouseResult") || false
 
-            @start_date = parse_date(params[:startDate]) || default_date(:start)
-            @end_date = parse_date(params[:endDate]) || default_date(:end)
+            @start_date = (parse_date(params[:startDate]) || default_date(:start)) + "T00:00"
+            @end_date = (parse_date(params[:endDate]) || default_date(:end)) + "T24:00"
           end
 
           def audit_report_params
@@ -130,14 +130,7 @@ module Api
                     when :end then 0
                     end
 
-            time_string = case type
-                          when :start then "T00:00"
-                          when :end then "T24:00"
-                          end
-
-            date_string = (Time.now.utc - count.days).strftime("%Y-%m-%d")
-
-            date_string + time_string
+            (Time.now.utc - count.days).strftime("%Y-%m-%d")
           end
 
           def parse_date(param)
