@@ -28,9 +28,14 @@ class PageAuditor < ApplicationService
   end
 
   def call
+    key = ENV.fetch("GOOGLE_KEY") { nil }
+
+    key_param = "&key=#{key}" if key
+
     psi_url = "https://www.googleapis.com" \
               "/pagespeedonline/v5/runPagespeed?" \
-              "strategy=mobile&url=#{CGI.escape(@page.url)}"
+              "strategy=mobile#{key_param}&url=#{CGI.escape(@page.url)}"
+
     psi_uri = URI.parse(psi_url)
 
     psi_session = Net::HTTP
