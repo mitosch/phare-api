@@ -5,9 +5,9 @@ require "net/http"
 # Runs a Google PageSpeed audit and saves it to the database
 class PageAuditor < ApplicationService
   SUMMARY_METRICS = {
-    max_potential_fid: "max-potential-fid",               # LH5 only, eol by LH6
-    first_meaningful_paint: "first-meaningful-paint",     # LH5 only, eol by LH6
-    first_cpu_idle: "first-cpu-idle",                     # LH5 only, eol by LH6
+    # max_potential_fid: "max-potential-fid",               # LH5 only, eol by LH6
+    # first_meaningful_paint: "first-meaningful-paint",     # LH5 only, eol by LH6
+    # first_cpu_idle: "first-cpu-idle",                     # LH5 only, eol by LH6
     first_contentful_paint: "first-contentful-paint",     # LH5, LH6
     speed_index: "speed-index",                           # LH5, LH6
     interactive: "interactive",                           # LH5, LH6
@@ -51,7 +51,7 @@ class PageAuditor < ApplicationService
         SUMMARY_METRICS.values.each do |metric|
           summary[metric] = lh_report.dig("lighthouseResult",
                                           "audits",
-                                          metric).except(*EXCLUDE_ATTRIBUTES)
+                                          metric)&.except(*EXCLUDE_ATTRIBUTES)
         end
 
         @page.audit_reports.create(
